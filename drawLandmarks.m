@@ -1,9 +1,11 @@
-function drawPoints(points)
-    for point = points
-        pointColour = getColour(point.value);
-        pointSize = getSize(point.value);
-        plot(point.x,point.y,'.','color',pointColour,'markersize',pointSize);
-    end
+function drawLandmarks(landmarks)
+
+for landmark = landmarks
+    pointColour = getColour(landmark.value);
+    pointSize = getSize(landmark.value);
+    plot(landmark.x,landmark.y,'.','color',pointColour,'markersize',pointSize);
+end
+
 end
 
 function [colour] = getColour(value)

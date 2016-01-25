@@ -7,10 +7,19 @@ scene = initialise();
 
 for i = 1:3
     [x,y,value] = generatePoint(scene);
-    points(i).x = x;
-    points(i).y = y;
-    points(i).value = value;
+    landmarks(i).x = x;
+    landmarks(i).y = y;
+    landmarks(i).value = value;
 end
 
+drawLandmarks(landmarks);
 
-drawPoints(points);
+%generate uniform particle filter;
+particles = rand(100,2);
+particles(:,1) = round(particles(:,1)*scene.width);
+particles(:,2) = round(particles(:,2)*scene.height);
+plot(particles(:,1),particles(:,2),'ro','markersize',3);
+
+%calculate reward for fixating on different locations
+rewards = calculateRewards(landmarks,particles);
+
