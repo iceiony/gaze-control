@@ -1,8 +1,3 @@
-%create scene 
-%draw two objects randomly on the scene ( two points of different sizes ) 
-%sprea a particles over the scene
-%for every particle calcualte the reward if it were chosen as a gausian
-
 scene = initialise();
 
 for i = 1:3
@@ -16,11 +11,17 @@ end
 drawLandmarks(landmarks);
 
 %generate uniform particle filter;
-particles = rand(100,2);
-particles(:,1) = round(particles(:,1)*scene.width);
-particles(:,2) = round(particles(:,2)*scene.height);
+% particles = rand(500,2);
+% particles(:,1) = round(particles(:,1)*scene.width);
+% particles(:,2) = round(particles(:,2)*scene.height);
+[p,q] = meshgrid(1:20:scene.width,1:20:scene.height);
+particles = [p(:) q(:)];
+
 plot(particles(:,1),particles(:,2),'ro','markersize',3);
 
 %calculate reward for fixating on different locations
 rewards = calculateRewards(landmarks,particles);
-
+for i = 1:length(particles)
+    prt = particles(i,:);
+    plot([prt(1) prt(1)],[prt(2) prt(2)+rewards(i)],'k','linewidth',1);
+end

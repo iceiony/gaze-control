@@ -1,6 +1,5 @@
 function [rewards] = calculateRewards(landmarks,locations)
-    
-GAZE_ACUITY = [100 100]; %gaze acuity as a normal distribution
+GAZE_ACUITY = [300 300]; %gaze acuity as a normal distribution
 
 if ~exist('locations')
     rewards = [];
@@ -15,6 +14,7 @@ for idx = 1:length(locations);
     end
 end
 
-rewards = rewards * 100;
-
+%flatten reward closer to landmark
+rewards = log2(rewards) + 30 ;
+rewards(rewards<0) = 0;
 end

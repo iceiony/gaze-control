@@ -39,7 +39,7 @@ landmarks(2).x = 200;
 landmarks(2).y = 200;
 landmarks(2).value = 0.8;
 landmarks(2).points = generateLandmarkShape(landmarks(2));
-particles = [ 190 190 ; 390 390];
+particles = [ 390 390 ; 190 190];
 
 res = calculateRewards(landmarks,particles);
 assert(res(1) < res(2) , 'Particles closer to landmark center should have more reward');
