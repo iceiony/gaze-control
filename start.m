@@ -6,10 +6,11 @@
 scene = initialise();
 
 for i = 1:3
-    [x,y,value] = generatePoint(scene);
+    [x,y,value] = generateLandmark(scene);
     landmarks(i).x = x;
     landmarks(i).y = y;
     landmarks(i).value = value;
+    landmarks(i).points = generateLandmarkShape(landmarks(i));
 end
 
 drawLandmarks(landmarks);

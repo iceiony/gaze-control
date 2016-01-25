@@ -7,9 +7,14 @@ if ~exist('locations')
     return;
 end
 
-rewards = zeros(length(locations));
-for location = locations
-
+rewards = zeros(length(locations),1);
+for idx = 1:length(locations);
+    location = locations(idx,:);
+    for landmark = landmarks
+        rewards(idx) = rewards(idx) + sum(mvnpdf(landmark.points,location,GAZE_ACUITY));
+    end
 end
+
+rewards = rewards * 100;
 
 end
