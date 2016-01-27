@@ -16,6 +16,9 @@ drawLandmarks(landmarks);
 % particles(:,2) = round(particles(:,2)*scene.height);
 [p,q] = meshgrid(1:20:scene.width,1:20:scene.height);
 particles = [p(:) q(:)];
+for i = 1:length(particles)
+    particles(i,1) = particles(i,1)+10*mod((particles(i,2)-1) /  20 ,2); 
+end
 
 plot(particles(:,1),particles(:,2),'ro','markersize',3);
 
