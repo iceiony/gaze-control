@@ -3,7 +3,7 @@ close all;
 
 scene = initialise();
 
-for i = 1:3
+for i = 1:2
     landmarks(i) =   generateLandmark(scene);
 end
 
