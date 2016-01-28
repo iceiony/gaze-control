@@ -3,7 +3,7 @@ close all;
 
 scene = initialise();
 
-for i = 1:5
+for i = 1:3
     landmarks(i) =   generateLandmark(scene);
 end
 
@@ -22,33 +22,36 @@ end
 
 %make a fixation and update each particle filter 
 %with the new observations
-SENSE_NOISE = 5;
+SENSE_NOISE = [100 100];
 
 
-for t=1:10
+for t=1:5
     
     %fixate in the middle of all particle sets
     meanX = mean(mean(particles(:,:,1)));
     meanY = mean(mean(particles(:,:,2)));
     
     fix = [meanX meanY];    
-    obs = plot(fix(1),fix(2),'.g','markersize',20);
     
-    pause;
-    delete(obs);
+    if exist('obs') 
+        delete(obs);
+    end
+    
+    obs = plot(fix(1),fix(2),'.g','markersize',20);
+    pause(1);
+    
     
     for i=1:length(landmarks);
         p = squeeze(particles(i,:,:));
         %calculate the distance from the actual landmark
-        measure = sqrt( (landmarks(i).x - fix(1))^2 + (landmarks(i).y - fix(2))^2 );
-        
+        measure = [landmarks(i).x - fix(1) landmarks(i).y - fix(2)];
+         
         %calculate the probability of each particle
         prob = zeros(length(p),1);
         for j=1:length(p)
-            noise = rand(1) * SENSE_NOISE;
-            dist = sqrt( sum((p(j,:)-fix).^2) ) + noise; %euclidian distance 
-            
-            prob(j) = normpdf(measure,dist,noise);
+            noise = (rand(1,2) .* SENSE_NOISE) - SENSE_NOISE/2;
+            estimate = p(j,:) - fix + noise;            
+            prob(j) = mvnpdf(measure,estimate,SENSE_NOISE);
         end
         
         weights = prob ./ sum(prob);
