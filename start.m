@@ -4,16 +4,19 @@ scene = initialise();
 landmarks = generateLandmarks(scene,2);
 drawLandmarks(landmarks);
 
-particles = generateParticles(scene,landmarks,200);
+particles = generateParticles(scene,landmarks,400);
 
 
-SYSTEM_NOISE = [10 10];
-particles = addNoise(particles,SYSTEM_NOISE);
+OBSERVATION_NOISE = [50 50];
+PARTICLE_NOISE = [60 60];
+
+particles = addNoise(particles,PARTICLE_NOISE);
 particlePlots = drawParticles(particles);
 
-for t=1:5
+for t=1:20
     %fixate in the middle of all particle sets
     fix = mean(cat(1,particles.positions));
+%     fix = ginput(1);
     
     if exist('obs') 
         delete(obs);
@@ -28,12 +31,14 @@ for t=1:5
         
         %calculate the relative position to the landmark 
         measure = [landmarks(i).x - fix(1) landmarks(i).y - fix(2)];
+        measure = mvnrnd(measure,OBSERVATION_NOISE);
          
         %calculate the probability of each particle
         prob = zeros(length(p),1);
         for j=1:length(p)
-            estimate = p(j,:) - fix;            
-            prob(j) = mvnpdf(measure, estimate, SYSTEM_NOISE );
+            estimate = p(j,:) - fix;       
+            
+            prob(j) = mvnpdf(measure, estimate, abs(estimate));
         end
         
         weights = prob ./ sum(prob);
@@ -45,10 +50,11 @@ for t=1:5
         end
         particles(i).positions = newPositions;
         
-        particles(i) = addNoise(particles(i),SYSTEM_NOISE);
+        particles(i) = addNoise(particles(i),PARTICLE_NOISE);
         
         %show new particles
-        delete(particlePlots(i));
+        delete(particlePlots(i).particles);
+        delete(particlePlots(i).gaussian);
         particlePlots(i) = drawParticles(particles(i));
     end 
 end
