@@ -7,16 +7,16 @@ drawLandmarks(landmarks);
 particles = generateParticles(scene,landmarks,400);
 
 
-OBSERVATION_NOISE = [50 50];
-PARTICLE_NOISE = [60 60];
+OBSERVATION_NOISE = [40 40];
+PARTICLE_NOISE = [50 50];
 
 particles = addNoise(particles,PARTICLE_NOISE);
 particlePlots = drawParticles(particles);
 
 for t=1:20
     %fixate in the middle of all particle sets
-    fix = mean(cat(1,particles.positions));
-%     fix = ginput(1);
+%     fix = mean(cat(1,particles.positions));
+    fix = ginput(1);
     
     if exist('obs') 
         delete(obs);
@@ -36,9 +36,9 @@ for t=1:20
         %calculate the probability of each particle
         prob = zeros(length(p),1);
         for j=1:length(p)
-            estimate = p(j,:) - fix;       
+            estimate = p(j,:) - fix;      
             
-            prob(j) = mvnpdf(measure, estimate, abs(estimate));
+            prob(j) = mvnpdf(measure, estimate, abs(estimate)*5);
         end
         
         weights = prob ./ sum(prob);
