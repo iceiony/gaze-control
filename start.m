@@ -5,13 +5,9 @@ landmarks = generateLandmarks(scene,2);
 drawLandmarks(landmarks);
 
 particles = generateParticles(scene,landmarks,400);
-
-
-OBSERVATION_NOISE = [40 40];
-PARTICLE_NOISE = [50 50];
-
-particles = addNoise(particles,PARTICLE_NOISE);
 particlePlots = drawParticles(particles);
+
+OBSERVATION_NOISE = [30 30];
 
 for t=1:20
     %fixate in the middle of all particle sets
@@ -33,12 +29,14 @@ for t=1:20
         measure = [landmarks(i).x - fix(1) landmarks(i).y - fix(2)];
         measure = mvnrnd(measure,OBSERVATION_NOISE);
          
-        %calculate the probability of each particle
+        %calculate the probability of each particle 
+        %and proportional noise levels
         prob = zeros(length(p),1);
+        noise = zeros(length(p),2);
         for j=1:length(p)
             estimate = p(j,:) - fix;      
-            
-            prob(j) = mvnpdf(measure, estimate, abs(estimate)*5);
+            noise(j,:) = abs(estimate);
+            prob(j) = mvnpdf(measure, estimate, abs(estimate));
         end
         
         weights = prob ./ sum(prob);
@@ -50,7 +48,7 @@ for t=1:20
         end
         particles(i).positions = newPositions;
         
-        particles(i) = addNoise(particles(i),PARTICLE_NOISE);
+        particles(i) = addNoise(particles(i),noise);
         
         %show new particles
         delete(particlePlots(i).particles);
