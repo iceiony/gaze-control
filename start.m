@@ -34,9 +34,12 @@ for t=1:20
         prob = zeros(length(p),1);
         noise = zeros(length(p),2);
         for j=1:length(p)
-            estimate = p(j,:) - fix;      
-            noise(j,:) = abs(estimate);
-            prob(j) = mvnpdf(measure, estimate, abs(estimate));
+            estimate = p(j,:) - fix;    
+                  
+            sigma = buildCovariance(estimate);
+            
+            noise(j,:) = [30 30];
+            prob(j) = mvnpdf(measure, estimate, sigma);
         end
         
         weights = prob ./ sum(prob);
