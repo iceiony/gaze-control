@@ -17,8 +17,8 @@ plot(X,T,'*');
 hold on;
 
 %train the gaussians weights
-[idx,mu,~,d] = kmeans(X,3 );
-sigma = sqrt(var(d));
+[idx,mu,~,d] = kmeans(X,8);
+sigma = var(d).^(1/9);
 
 for j=1:size(mu,1)
     phi(j,:) = exp(- (X-mu(j)).^2 / (2*sigma(j).^2));
@@ -28,7 +28,7 @@ phi = [ones(size(phi,1),1) phi];
 
 %train output layer weigts 
 % omg = phi'*phi ;
-% V = pinv(omg + 0.2 * eye(size(omg)) ) * phi' * T ; 
+% V = pinv(omg + 0.2 * eye(size(omg)) ) * phi' * T ; %regularisation
 V = pinv(phi) * T;
 
 %plot the output for another set of input
