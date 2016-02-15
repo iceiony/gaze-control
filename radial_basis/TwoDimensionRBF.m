@@ -14,9 +14,8 @@ title('target (25*25 points)');
 X = [y(:) x(:)];
 
 % train the gaussians weights
-[idx,mu,sumd,d] = kmeans(X,50);
+[idx,mu,~,d] = kmeans(X,50);
 sigma = var(d).^(1/9);
-% sigma = sumd .* 9;
 
 for j=1:size(mu,1)
     mu_all = repmat(mu(j,:),length(X),1);
