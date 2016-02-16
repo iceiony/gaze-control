@@ -2,12 +2,19 @@
 clear all;
 close all;
 
+UNIT_COUNT = 8;
+NOISE = 0.5;
+
 fig = figure();
 
 X = -1:.1:1;
 T = [-.9602 -.5770 -.0729  .3771  .6405  .6600  .4609 ...
       .1336 -.2013 -.4344 -.5000 -.3930 -.1647  .0988 ...
       .3072  .3960  .3449  .1816 -.0312 -.2189 -.3201];
+
+%add noise
+T = T + rand(1,length(T))*NOISE;
+  
 X = X';
 T = T';
 
@@ -15,8 +22,8 @@ plot(X,T,'*');
 hold on;
 
 %train the gaussians weights
-[idx,mu,~,d] = kmeans(X,8);
-sigma = var(d).^(1/9);
+[idx,mu,~,distance] = kmeans(X,UNIT_COUNT);
+sigma = var(distance).^(1/9);
 
 for j=1:size(mu,1)
     phi(j,:) = exp(- (X-mu(j)).^2 / (2*sigma(j).^2));
@@ -42,5 +49,5 @@ Y =  phi * V ;
 
 plot(X,Y,'r');
 
-xlabel('3 belief points');
+title(sprintf('%d hidden units',length(mu)));
 legend('data points','network fit');
