@@ -15,12 +15,16 @@ function rashej_rao()
     prob_trans = transitionProbabilities();
 
     %train the network
+    mu = initialiseRandomBeliefCentres(11);
+    sigma = sqrt(0.05);
+    v = zeros(11,1);
+    
     belief = [0.5 0.5];
     coherence = randi(length(prob_obs));
     state = randi(2);
-    
     for t=1:10   
-
+        value_beilef = estimateValue(belief,v,mu,sigma);
+        
         observation = observationProbability(state,prob_obs(coherence));
 
         belief = beliefUpdate(belief,observation);
@@ -32,6 +36,14 @@ function rashej_rao()
     
     
 %==========================================================================
+    function [value] = estimateValue(belief,v,mu,sigma)
+        phi = [];
+        for i=1:size(mu,1)
+            distance = sum((belief - mu(i,:)).^2);
+            phi(i) = exp( -distance / (2*sigma^2) );
+        end
+        value = phi * v; 
+    end
 
     function [observation] = observationProbability(state,prob_obs)
         if state == s.left
@@ -63,5 +75,13 @@ function rashej_rao()
 
         prob_trans(s.left,a.sample,s.right) = 0;
         prob_trans(s.right,a.sample,s.left) = 0;
+    end
+
+    function [mu] = initialiseRandomBeliefCentres(number)      
+        [x,y] = meshgrid(0:0.1:1,0:0.1:1);
+        X = [y(:) x(:)];
+
+        % train the gaussians weights
+        [idx,mu,~,~] = kmeans(X,number);
     end
 end
