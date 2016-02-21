@@ -1,6 +1,6 @@
 function rashej_rao()
     %fixed probability for observation depending on random coherence values
-    prob_obs = 0.5 + rand(100,1) / 2;
+    prob_obs = 0.5 + rand(1000,1) / 2;
 
     %define actions
     a.left = 1;
@@ -17,23 +17,23 @@ function rashej_rao()
     %train the network
     mu = initialiseRandomBeliefCentres(11);
     sigma = sqrt(0.05);
-    v = zeros(11,1);
-    W = zeros(11,3);
+    v = zeros(12,1);
+    W = zeros(12,3);
     
     %setup start trial
     belief = [0.5 0.5];
     coherence = randi(length(prob_obs));
     state = randi(2);
-    
-    %when a new trial starts, do a free sample observation
-    observation = observationProbability(state,prob_obs(coherence));
-    belief = beliefUpdate(belief,observation);
+%     
+%     %when a new trial starts, do a free sample observation
+%     observation = observationProbability(state,prob_obs(coherence));
+%     belief = beliefUpdate(belief,observation);
     
     %rememeber reward for plotting
     reward = zeros(14000,1);
     for t=1:length(reward)   
         %phi is g(b_t) from Rashej Rao paper 2010 paper
-        phi = estimateBeliefPoints(belief,mu,sigma); 
+        phi = [1 estimateBeliefPoints(belief,mu,sigma)]; 
         value_beilef = phi * v; 
 
         action = selectActionToTake(phi,W);
@@ -58,37 +58,43 @@ function rashej_rao()
                 coherence = randi(length(prob_obs));
                 state = randi(2);
                 
-                %when a new trial starts, do a free sample observation
-                observation = observationProbability(state,prob_obs(coherence));
-                belief = beliefUpdate(belief,observation);
+%                 %when a new trial starts, do a free sample observation
+%                 observation = observationProbability(state,prob_obs(coherence));
+%                 belief = beliefUpdate(belief,observation);
         end
         
         %compute next belief estimate
-        value_new_belief = estimateBeliefPoints(belief,mu,sigma) * v;
+        value_new_belief = [1 estimateBeliefPoints(belief,mu,sigma)] * v;
         
         %update belief centers and output weights V and W 
         td_error = reward(t) + value_new_belief - value_beilef;
         
         diffs = repmat(belief,size(mu,1),1) - mu;
-        mu = mu + 0.0005 * td_error * phi * v * 2 * diffs / sigma^2;
+        mu = mu + 2.5 * 10^-7 * td_error * phi * v * 2 * diffs / sigma^2;
         v = v + 0.0005 * td_error * phi';       
-        
-        W(:,action) = 2.5 * 10^-7 * td_error * phi;
+
+        W(:,action) = W(:,action) + 0.0005 * td_error * phi';
     end
 %     
-%     moving_window = ones(1,500);
-%     sum_reward_window = conv(reward,moving_window);
-%     sum_reward_window = sum_reward_window(500:end-500);
-%     plot(1:length(sum_reward_window),sum_reward_window);
-%     hold on;
-%     value = [];
-%     for t = 0:0.1:1
-%         belief = [t 1-t];
-%         phi = estimateBeliefPoints(belief,mu,sigma); 
-%         value(end+1) = phi * v; 
-%     end
-%     plot(0:0.1:1,value);
-    
+    figure();
+    moving_window = ones(1,500);
+    sum_reward_window = conv(reward,moving_window);
+    sum_reward_window = sum_reward_window(500:end-500);
+    plot(1:length(sum_reward_window),sum_reward_window);
+    xlabel('time steps')
+    ylabel('total reward');
+
+    figure();
+    value = [];
+    for t = 0:0.01:1
+        belief = [t 1-t];
+        phi = [1 estimateBeliefPoints(belief,mu,sigma)]; 
+        value(end+1) = phi * v; 
+    end
+    plot(0:0.01:1,value);
+    xlabel('belief(Sr)');
+    ylabel('estimated value');
+
     
 %==========================================================================
     function [action] = selectActionToTake(phi,W)
