@@ -16,6 +16,11 @@ function rashej_rao()
 
     %train the network
     mu = initialiseRandomBeliefCentres(11);
+    
+    muFig = figure();
+    title('initial belief');
+    plot(mu(:,1),mu(:,2),'*b');
+    
     sigma = sqrt(0.05);
     v = zeros(12,1);
     W = zeros(12,3);
@@ -69,8 +74,8 @@ function rashej_rao()
         %update belief centers and output weights V and W 
         td_error = reward(t) + value_new_belief - value_beilef;
         
-        diffs = repmat(belief,size(mu,1),1) - mu;
-        mu = mu + 2.5 * 10^-7 * td_error * phi * v * 2 * diffs / sigma^2;
+%         diffs = repmat(belief,size(mu,1),1) - mu;
+%         mu = mu + 2.5 * 10^-7 * td_error * phi * v * 2 * diffs / sigma^2;
         v = v + 0.0005 * td_error * phi';       
 
         W(:,action) = W(:,action) + 0.0005 * td_error * phi';
@@ -94,6 +99,11 @@ function rashej_rao()
     plot(0:0.01:1,value);
     xlabel('belief(Sr)');
     ylabel('estimated value');
+    
+    figure(muFig);
+    hold on;
+    plot(mu(:,1),mu(:,2),'*r');
+    legend('initial','trained');
 
     
 %==========================================================================
