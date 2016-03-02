@@ -61,7 +61,7 @@ for t=1:length(reward)
                 end
 
                 obs = plot(fix(1),fix(2),'.g','markersize',20);
-                pause(0.01);
+                input('');
             end
         otherwise % the action was to pick an object with a certain uncertainty
             target = landmarks(action);
