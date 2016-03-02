@@ -1,9 +1,6 @@
 function [mu,sigma] = generateBeliefPoints(pointsCount, landmarkCount)
-    precission = 0:0.05:1;
-    tollerant = 0:0.1:1;
-    [x,y,z] = ndgrid(precission ,precission ,tollerant);
-    
-    beliefSpace = repmat([x(:) y(:) z(:)],1,landmarkCount);
+    %take random values to partition possible the space of possible values
+    beliefSpace = rand(20^landmarkCount * 10,3 * landmarkCount);
     
     [idx,mu,~,d] = kmeans(beliefSpace,pointsCount);
     
