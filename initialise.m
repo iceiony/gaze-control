@@ -1,7 +1,5 @@
 function [scene] = initialise()
 close all;
-clear all;
-
 rng('shuffle');
 
 scene = struct(...

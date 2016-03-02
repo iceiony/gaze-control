@@ -4,12 +4,14 @@ function [covariance] = buildCovariance(estimate)
     dist = sqrt(sum(estimate.^2));
     x = estimate(1);
     y = estimate(2);
-    
-    angle = asin(y / dist);
-    
-    r = [cos(angle) -sin(angle)  
-         sin(angle) cos(angle) ];
-     
-    covariance = r * [abs(x)   0 
-                      0        abs(y)] * r';
+
+    covariance = [ abs(x) 0 
+                    0     abs(y)];
+%     angle = asin(y / dist);
+%     
+%     r = [cos(angle) -sin(angle)  
+%          sin(angle) cos(angle) ];
+%      
+%     covariance = r * [abs(x)   0 
+%                       0        abs(y)] * r';
 end
