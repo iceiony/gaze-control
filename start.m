@@ -43,10 +43,10 @@ for t=1:length(reward)
     switch action
         case size(W,2) % the action is to sample again
             %fixate random position 
-            fix = rand(1,2) .* [scene.width scene.height];
+%             fix = rand(1,2) .* [scene.width scene.height];
             
             %fixate in the middle of all particle sets
-%             fix = mean(cat(1,particles.positions));
+            fix = mean(cat(1,particles.positions));
 %             fix = ginput(1);
             reward(t) = -1;
             particles = updateParticleFilter(particles,landmarks,fix);
@@ -61,7 +61,8 @@ for t=1:length(reward)
                 end
 
                 obs = plot(fix(1),fix(2),'.g','markersize',20);
-                input('');
+                
+                pause(0.1);
             end
         otherwise % the action was to pick an object with a certain uncertainty
             target = landmarks(action);
@@ -78,6 +79,17 @@ for t=1:length(reward)
                 reward(t) = -100;
             end
             
+            if DRAW
+                target = mean(targetParticles.positions);
+                target_plot = plot(target(1),target(2),'.k','markersize',20);
+                
+                input(sprintf('Current reward : %d',reward(t)));
+
+                if exist('target_plot')
+                    delete(target_plot);
+                end
+            end
+            
             %begin new trial
 
             landmarks = generateLandmarks(scene,LANDMARK_COUNT);
@@ -89,6 +101,8 @@ for t=1:length(reward)
                 particlePlots = drawParticles(particles);
             end
     end
+    
+
     
     %update the weights with the new reward
     phi = [1 estimateBeliefPoints(scene,landmarks,particles,mu,sigma)];
