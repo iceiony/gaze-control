@@ -43,11 +43,12 @@ for t=1:length(reward)
     switch action
         case size(W,2) % the action is to sample again
             %fixate random position 
-%             fix = rand(1,2) .* [scene.width scene.height];
+            fix = rand(1,2) .* [scene.width scene.height];
             
             %fixate in the middle of all particle sets
-            fix = mean(cat(1,particles.positions));
+%             fix = mean(cat(1,particles.positions));
 %             fix = ginput(1);
+
             reward(t) = -1;
             particles = updateParticleFilter(particles,landmarks,fix);
 
