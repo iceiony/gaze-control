@@ -28,11 +28,11 @@ for t=1:length(reward)
         disp(t);
     end
     
-    if t == length(reward)-50
-        DRAW = true;
-        landmarkPlots = drawLandmarks(landmarks);
-        particlePlots = drawParticles(particles);
-    end
+%     if t == length(reward)-50
+%         DRAW = true;
+%         landmarkPlots = drawLandmarks(landmarks);
+%         particlePlots = drawParticles(particles);
+%     end
     
     phi = [1 estimateBeliefPoints(scene,landmarks,particles,mu,sigma)];
    

@@ -1,6 +1,6 @@
 function [mu,sigma] = generateBeliefPoints(pointsCount, landmarkCount)
     %take random values to partition possible the space of possible values
-    beliefSpace = rand(20^landmarkCount * 10,3 * landmarkCount) * 2;
+    beliefSpace = rand(20^landmarkCount * 20,3 * landmarkCount);
     
     [idx,mu,~,d] = kmeans(beliefSpace,pointsCount);
     
