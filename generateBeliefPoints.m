@@ -4,5 +4,5 @@ function [mu,sigma] = generateBeliefPoints(pointsCount, landmarkCount)
     
     [idx,mu,~,d] = kmeans(beliefSpace,pointsCount);
     
-    sigma = var(d).^-9;
+    sigma = var(d);
 end
