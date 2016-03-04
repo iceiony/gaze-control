@@ -1,12 +1,16 @@
-function [particles] = updateParticleFilter(particles,landmarks,fix)
-SYSTEM_NOISE = [30 30];
+function [particles] = updateParticleFilter(scene,particles,landmarks,fix)
+SYSTEM_NOISE = [60 60];
 
     for i=1:length(landmarks);
         p = particles(i).positions;
         
         %calculate the relative position to the landmark 
         measure = [landmarks(i).x - fix(1) landmarks(i).y - fix(2)];
-        measure = mvnrnd(measure,SYSTEM_NOISE);
+        
+        %noise levels decrease the closer we are to the to object
+        measureNoise = SYSTEM_NOISE .* abs(measure) ./ [scene.width scene.height];
+        measure = mvnrnd(measure,measureNoise);
+        
          
         %calculate the probability of each particle 
         %and proportional noise levels
@@ -17,7 +21,7 @@ SYSTEM_NOISE = [30 30];
                   
             sigma = buildCovariance(estimate);
             
-            noise(j,:) = abs(estimate) * rand / 1.5 + SYSTEM_NOISE;
+            noise(j,:) = abs(estimate) + SYSTEM_NOISE/2;
             prob(j) = mvnpdf(measure, estimate, sigma);
         end
         
