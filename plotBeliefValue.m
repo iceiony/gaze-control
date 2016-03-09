@@ -1,9 +1,10 @@
 landmarks = [];
+positions = [ 50 50 ; 500 500];
 for i = 1:LANDMARK_COUNT
-    landmarks(i).x = 50*(i-1);
-    landmarks(i).y = 50*(i-1);
+    landmarks(i).x = positions(i,1);
+    landmarks(i).y = positions(i,2);
     landmarks(i).value = 0.5;
-    landmarks(i).points = [50*(i-1) 50*(i-1)];
+    landmarks(i).points = positions(i,:);
     landmarks(i).colour = [ .5 .5 .5];
 end 
 
@@ -13,7 +14,7 @@ scene = initialise();
 
 particles = generateParticles(scene,landmarks,PARTICLE_COUNT);
 drawLandmarks(landmarks);
-for i = [600:-200:0 0]
+for i = [500:-100:0 0]
 
     %show new particles
     if exist('particlePlots')
@@ -31,15 +32,15 @@ for i = [600:-200:0 0]
     
     beliefValue(end+1) = phi * v;
     
-    action = exp(phi * W);
-    action = action ./ sum(action);
-    beliefAction(end+1,:) = action;
-%     beliefAction(end+1,:) = phi*W;
+%     action = exp(phi * W);
+%     action = action ./ sum(action);
+%     beliefAction(end+1,:) = action;
+    beliefAction(end+1,:) = phi*W;
     
     disp(beliefValue(end));
     pause(0.5);
     
-    fix = [landmarks(1).x+i landmarks(1).y+i];
+    fix = [i i];
     particles = updateParticleFilter(scene,particles,landmarks,fix);
 end
 
@@ -49,3 +50,4 @@ plot(beliefValue);
 figure();
 plot(beliefAction);
 
+legend('1','2','gaze');

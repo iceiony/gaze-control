@@ -2,11 +2,13 @@ function [ phi] = estimateBeliefPoints(scene,landmarks,particles,mu,sigma )
     beliefState = zeros(3,length(landmarks));
     
     for i=1:length(landmarks)
-        eigenValues = eig(cov(particles(i).positions)) ./ [scene.height;scene.width;] ;
+        eigenValues = eig(cov(particles(i).positions)).^(1/2) ./ [scene.height;scene.width;] ;
         
-        eigenValues(1) = min(eigenValues(1),1);
-        eigenValues(2) = min(eigenValues(2),1);
-        
+        eigenValues = eigenValues*3;
+%         
+%         eigenValues(1) = min(eigenValues(1),1);
+%         eigenValues(2) = min(eigenValues(2),1);
+%         
         beliefState(:,i) = [eigenValues' landmarks(i).value];
     end
     

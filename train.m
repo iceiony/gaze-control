@@ -2,9 +2,9 @@ clear all;
 close all; 
 
 DRAW = false;
-GRASP_THRESHOLD = 20;
+GRASP_THRESHOLD = 10;
 LANDMARK_COUNT = 2;
-PARTICLE_COUNT = 200;
+PARTICLE_COUNT = 400;
 
 scene = initialise();
 
@@ -22,7 +22,7 @@ v = zeros(size(mu,1)+1,1); %belief value weights
 W = zeros(size(mu,1)+1,length(landmarks)+1); %action weights ( last action is perception )
 PW = zeros(size(mu,1)+1,length(landmarks)); %perception weights 
 
-reward = zeros(8000,1); %exact reward for each time step
+reward = zeros(4000,1); %exact reward for each time step
 rewardPerception = zeros(length(reward),1);
 for t=1:length(reward)
     
