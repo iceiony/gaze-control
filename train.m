@@ -2,9 +2,9 @@ clear all;
 close all; 
 
 DRAW = false;
-GRASP_THRESHOLD = 10;
-LANDMARK_COUNT = 2;
-PARTICLE_COUNT = 400;
+GRASP_THRESHOLD = 20;
+LANDMARK_COUNT = 1;
+PARTICLE_COUNT = 200;
 
 scene = initialise();
 
@@ -47,10 +47,10 @@ for t=1:length(reward)
     switch action
         case size(W,2) % the action is to sample again
             %fixate random position 
-%             fix = rand(1,2) .* [scene.width scene.height];
+            fix = rand(1,2) .* [scene.width scene.height];
             
             %fixate in the middle of all particle sets
-            fix = mean(cat(1,particles.positions));
+%             fix = mean(cat(1,particles.positions));
 %             fix = ginput(1);
 %             perceptionAction = selectActionToTake(phi,PW);
 %             fix = mean(particles(perceptionAction).positions);
@@ -116,9 +116,9 @@ for t=1:length(reward)
     valueNewBelief = phi * v;
     
     td_error = reward(t) + valueNewBelief - valueBelief;
-    v = v + 0.005 * td_error * phi';       
+    v = v + 0.0005 * td_error * phi';       
 
-    W(:,action) = W(:,action) + 0.05 * td_error * phi';
+    W(:,action) = W(:,action) + 0.00005 * td_error * phi';
     
     %update perception weights with reward if perception action taken
 %     if action == size(W,2)
