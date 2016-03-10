@@ -17,12 +17,12 @@ if DRAW
 end
 
 disp('Distributing belief points');
-[mu,sigma] = generateBeliefPoints(25,length(landmarks));
-v = zeros(size(mu,1)+1,1); %belief value weights
-W = zeros(size(mu,1)+1,length(landmarks)+1); %action weights ( last action is perception )
+% [mu,sigma] = generateBeliefPoints(50,length(landmarks));
+% v = zeros(size(mu,1)+1,1); %belief value weights
+% W = zeros(size(mu,1)+1,length(landmarks)+1); %action weights ( last action is perception )
 % PW = zeros(size(mu,1)+1,length(landmarks)); %perception weights 
-% v = zeros(4,1);
-% W = zeros(4,length(landmarks)+1);
+v = zeros(4,1);
+W = zeros(4,length(landmarks)+1);
 
 reward = zeros(4000,1); %exact reward for each time step
 rewardPerception = zeros(length(reward),1);
@@ -39,8 +39,8 @@ for t=1:length(reward)
 %     end
     
     beliefState = generateBeliefState(scene,landmarks,particles);
-    phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
-%     phi = [1 beliefState];
+%     phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
+    phi = [1 beliefState];
     
     valueBelief = phi * v;
     action = selectActionToTake(phi,W);
@@ -85,7 +85,7 @@ for t=1:length(reward)
             distance = sqrt(sum(distance.^2));
             
             if distance < GRASP_THRESHOLD 
-                reward(t) = 20;%40 + target.value * 60;
+                reward(t) = 15 + target.value * 10;
             else
                 reward(t) = -100;
             end
@@ -117,8 +117,8 @@ for t=1:length(reward)
     
     %update the weights with the new reward
     beliefState = generateBeliefState(scene,landmarks,particles);
-    phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
-%     phi = [ 1 beliefState ];
+%     phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
+    phi = [ 1 beliefState ];
     valueNewBelief = phi * v;
     
     td_error = reward(t) + valueNewBelief - valueBelief;

@@ -5,10 +5,10 @@ for k = 1:length(interval)
     for j = 1:length(interval)
         
         beliefState = [ interval(k) interval(j) 0.5];
-        phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
-%         phi = [ 1 beliefState];
+%         phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
+        phi = [ 1 beliefState];
 
-        values(k,j) =  phi * v;
+        values(k,j) =  phi * W(:,1);
     end
 end
 

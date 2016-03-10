@@ -7,7 +7,7 @@ end
 function [landmark] = generateSingleLandmark(scene)
     landmark.x = randi(scene.width-50)+25;
     landmark.y = randi(scene.height-50)+25;
-    landmark.value = rand();
+    landmark.value = round(rand());
     landmark.points = generateLandmarkShape(landmark);
     landmark.colour = getColour(landmark.value);
 end
