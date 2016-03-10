@@ -36,7 +36,8 @@ for t=1:length(reward)
 %         particlePlots = drawParticles(particles);
 %     end
     
-    phi = [1 estimateBeliefPoints(scene,landmarks,particles,mu,sigma)];
+    beliefState = generateBeliefState(scene,landmarks,particles);
+    phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
    
     valueBelief = phi * v;
     action = selectActionToTake(phi,W);
@@ -112,7 +113,8 @@ for t=1:length(reward)
 
     
     %update the weights with the new reward
-    phi = [1 estimateBeliefPoints(scene,landmarks,particles,mu,sigma)];
+    beliefState = generateBeliefState(scene,landmarks,particles);
+    phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
     valueNewBelief = phi * v;
     
     td_error = reward(t) + valueNewBelief - valueBelief;

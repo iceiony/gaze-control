@@ -1,16 +1,4 @@
-function [ phi] = estimateBeliefPoints(scene,landmarks,particles,mu,sigma )
-    beliefState = zeros(3,length(landmarks));
-    
-    for i=1:length(landmarks)
-        eigenValues = eig(cov(particles(i).positions)).^(1/2) ./ [scene.height;scene.width;] ;
-        
-        eigenValues = eigenValues*4;
-        
-        beliefState(:,i) = [eigenValues' landmarks(i).value];
-    end
-    
-%     disp(beliefState');
-    
+function [ phi] = estimateBeliefPoints(beliefState,mu,sigma )
     phi = zeros(1,size(mu,1));
     for i=1:size(mu,1)
         distance = sum((beliefState(:)' - mu(i,:)).^2);
