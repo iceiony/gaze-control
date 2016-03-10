@@ -8,4 +8,6 @@ function [beliefState] = generateBeliefState(scene,landmarks,particles)
         
         beliefState(:,i) = [eigenValues' landmarks(i).value];
     end
+    
+    beliefState = beliefState(:)';
 end
