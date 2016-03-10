@@ -18,4 +18,5 @@ for k = 1:length(interval)
     end
 end
 
+figure();
 mesh(interval,interval,values);

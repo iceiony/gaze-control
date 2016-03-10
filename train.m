@@ -17,7 +17,7 @@ if DRAW
 end
 
 disp('Distributing belief points');
-[mu,sigma] = generateBeliefPoints(200,length(landmarks));
+[mu,sigma] = generateBeliefPoints(50,length(landmarks));
 v = zeros(size(mu,1)+1,1); %belief value weights
 W = zeros(size(mu,1)+1,length(landmarks)+1); %action weights ( last action is perception )
 PW = zeros(size(mu,1)+1,length(landmarks)); %perception weights 
@@ -81,7 +81,7 @@ for t=1:length(reward)
             distance = sqrt(sum(distance.^2));
             
             if distance < GRASP_THRESHOLD 
-                reward(t) = 40 + target.value * 60;
+                reward(t) = 20;%40 + target.value * 60;
             else
                 reward(t) = -100;
             end
@@ -124,7 +124,7 @@ for t=1:length(reward)
 %     if action == size(W,2)
 %         newValueActions = phi*W(:,1:end-1);
 %         rewardPerception(t) = max(newValueActions) - max(valueActions);
-%         PW(:,perceptionAction) = PW(:,perceptionAction) + ...
+%         PW(:,perceptionAxction) = PW(:,perceptionAction) + ...
 %             10^-4  * rewardPerception(t) * phi';
 %     end
     
@@ -138,3 +138,4 @@ plot(sum_reward_window');
 xlabel('time steps')
 ylabel('total reward');
 
+beliefValuePlot;
