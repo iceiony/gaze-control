@@ -24,7 +24,7 @@ disp('Distributing belief points');
 v = zeros(4,1);
 W = zeros(4,length(landmarks)+1);
 
-reward = zeros(4000,1); %exact reward for each time step
+reward = zeros(8000,1); %exact reward for each time step
 rewardPerception = zeros(length(reward),1);
 for t=1:length(reward)
     
@@ -46,7 +46,7 @@ for t=1:length(reward)
     action = selectActionToTake(phi,W);
     
     %action current value for perception
-    valueActions = phi * W(:,1:end-1);
+    actionValues = phi;
     
     switch action
         case size(W,2) % the action is to sample again
@@ -117,14 +117,21 @@ for t=1:length(reward)
     
     %update the weights with the new reward
     beliefState = generateBeliefState(scene,landmarks,particles);
-%     phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
-    phi = [ 1 beliefState ];
-    valueNewBelief = phi * v;
+%     newPhi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
+    newPhi = [ 1 beliefState ];
+    valueNewBelief = newPhi * v;
     
     td_error = reward(t) + valueNewBelief - valueBelief;
-    v = v + 0.0005 * td_error * phi';       
-
-    W(:,action) = W(:,action) + 0.00005 * td_error * phi';
+    v = v + 0.0005 * td_error * newPhi';   
+    
+    actionNewValues = newPhi * W;
+    
+    switch action
+        case size(W,2)
+            W(:,action) = W(:,action) + 0.00005 * (actionNewValues(1) - actionValues(1) - actionValues(2)) * phi';
+        otherwise 
+            W(:,action) = W(:,action) + 0.00005 * td_error * phi';
+    end
     
     %update perception weights with reward if perception action taken
 %     if action == size(W,2)
@@ -143,5 +150,6 @@ sum_reward_window = sum_reward_window(windowSize:end-windowSize);
 plot(sum_reward_window);
 xlabel('time steps')
 ylabel('total reward');
+
 
 beliefValuePlot;
