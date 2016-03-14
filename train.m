@@ -3,7 +3,7 @@ close all;
 
 DRAW = false;
 GRASP_THRESHOLD = 20;
-LANDMARK_COUNT = 1;
+LANDMARK_COUNT = 2;
 PARTICLE_COUNT = 200;
 
 scene = initialise();
@@ -17,12 +17,13 @@ if DRAW
 end
 
 disp('Distributing belief points');
-% [mu,sigma] = generateBeliefPoints(50,length(landmarks));
-% v = zeros(size(mu,1)+1,1); %belief value weights
-% W = zeros(size(mu,1)+1,length(landmarks)+1); %action weights ( last action is perception )
-% PW = zeros(size(mu,1)+1,length(landmarks)); %perception weights 
-v = zeros(4,1);
-W = zeros(4,length(landmarks)+1);
+
+[mu,sigma] = generateBeliefPoints(50,length(landmarks));
+v = zeros(size(mu,1)+1,1); %belief value weights
+W = zeros(size(mu,1)+1,length(landmarks)+1); %action weights ( last action is perception )
+
+% v = zeros(4,1);
+% W = zeros(4,length(landmarks)+1);
 
 reward = zeros(8000,1); %exact reward for each time step
 rewardPerception = zeros(length(reward),1);
@@ -39,8 +40,8 @@ for t=1:length(reward)
 %     end
     
     beliefState = generateBeliefState(scene,landmarks,particles);
-%     phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
-    phi = [1 beliefState];
+    phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
+%     phi = [1 beliefState];
     
     valueBelief = phi * v;
     action = selectActionToTake(phi,W);
@@ -51,13 +52,11 @@ for t=1:length(reward)
     switch action
         case size(W,2) % the action is to sample again
             %fixate random position 
-            fix = rand(1,2) .* [scene.width scene.height];
+%             fix = rand(1,2) .* [scene.width scene.height];
             
             %fixate in the middle of all particle sets
 %             fix = mean(cat(1,particles.positions));
-%             fix = ginput(1);
-%             perceptionAction = selectActionToTake(phi,PW);
-%             fix = mean(particles(perceptionAction).positions);
+            fix = mean(particles(randi(LANDMARK_COUNT)).positions);
 
             reward(t) = -1;
             particles = updateParticleFilter(scene,particles,landmarks,fix);
@@ -117,8 +116,8 @@ for t=1:length(reward)
     
     %update the weights with the new reward
     beliefState = generateBeliefState(scene,landmarks,particles);
-%     newPhi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
-    newPhi = [ 1 beliefState ];
+    newPhi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
+%     newPhi = [ 1 beliefState ];
     valueNewBelief = newPhi * v;
     
     td_error = reward(t) + valueNewBelief - valueBelief;
@@ -126,19 +125,11 @@ for t=1:length(reward)
     
     actionNewValues = newPhi * W;
     
-    switch action
-        case size(W,2)
-            W(:,action) = W(:,action) + 0.00005 * (actionNewValues(1) - actionValues(1) - actionValues(2)) * phi';
-        otherwise 
-            W(:,action) = W(:,action) + 0.00005 * td_error * phi';
-    end
-    
-    %update perception weights with reward if perception action taken
-%     if action == size(W,2)
-%         newValueActions = phi*W(:,1:end-1);
-%         rewardPerception(t) = max(newValueActions) - max(valueActions);
-%         PW(:,perceptionAxction) = PW(:,perceptionAction) + ...
-%             10^-4  * rewardPerception(t) * phi';
+%     switch action
+%         case size(W,2)
+%             W(:,action) = W(:,action) + 0.00005 * (actionNewValues(1) - actionValues(1) - actionValues(2)) * phi';
+%         otherwise 
+            W(:,action) = W(:,action) + 0.0005 * td_error * phi';
 %     end
     
 end
