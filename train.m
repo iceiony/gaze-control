@@ -18,12 +18,12 @@ end
 
 disp('Distributing belief points');
 
-[mu,sigma] = generateBeliefPoints(50,length(landmarks));
-v = zeros(size(mu,1)+1,1); %belief value weights
-W = zeros(size(mu,1)+1,length(landmarks)+1); %action weights ( last action is perception )
+% [mu,sigma] = generateBeliefPoints(50,length(landmarks));
+% v = zeros(size(mu,1)+1,1); %belief value weights
+% W = zeros(size(mu,1)+1,length(landmarks)*2); %action weights ( last action is perception )
 
-% v = zeros(4,1);
-% W = zeros(4,length(landmarks)+1);
+v = zeros(3*length(landmarks)+1,1);
+W = zeros(3*length(landmarks)+1,length(landmarks)*2);
 
 reward = zeros(8000,1); %exact reward for each time step
 rewardPerception = zeros(length(reward),1);
@@ -40,84 +40,80 @@ for t=1:length(reward)
 %     end
     
     beliefState = generateBeliefState(scene,landmarks,particles);
-    phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
-%     phi = [1 beliefState];
+%     phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
+    phi = [1 beliefState];
     
     valueBelief = phi * v;
     action = selectActionToTake(phi,W);
     
     %action current value for perception
-    actionValues = phi;
+    actionValues = phi * W;
     
-    switch action
-        case size(W,2) % the action is to sample again
-            %fixate random position 
-%             fix = rand(1,2) .* [scene.width scene.height];
-            
-            %fixate in the middle of all particle sets
-%             fix = mean(cat(1,particles.positions));
-            fix = mean(particles(randi(LANDMARK_COUNT)).positions);
+    if action > LANDMARK_COUNT
+        target = action - LANDMARK_COUNT;
+        fix = mean(particles(target).positions);
 
-            reward(t) = -1;
-            particles = updateParticleFilter(scene,particles,landmarks,fix);
+        reward(t) = -1;
+        particles = updateParticleFilter(scene,particles,landmarks,fix);
 
-            if DRAW
-                %show new particles
-                clearPlots(particlePlots);
-                particlePlots = drawParticles(particles);
-                
-                if exist('obs') 
-                    delete(obs);
-                end
+        if DRAW
+            %show new particles
+            clearPlots(particlePlots);
+            particlePlots = drawParticles(particles);
 
-                obs = plot(fix(1),fix(2),'.g','markersize',20);
-                
-                pause(0.1);
+            if exist('obs') 
+                delete(obs);
             end
-        otherwise % the action was to pick an object with a certain uncertainty
-            target = landmarks(action);
-            targetParticles = particles(action);
-            
-            %grasp considered succesful when the particle center is within
-            %object threshold distance 
-            distance = mean(targetParticles.positions) - [target.x target.y];
-            distance = sqrt(sum(distance.^2));
-            
-            if distance < GRASP_THRESHOLD 
-                reward(t) = 15 + target.value * 10;
-            else
-                reward(t) = -100;
-            end
-            
-            if DRAW
-                target = mean(targetParticles.positions);
-                target_plot = plot(target(1),target(2),'.k','markersize',20);
-                
-                input(sprintf('Current reward : %d',reward(t)));
 
-                if exist('target_plot')
-                    delete(target_plot);
-                end
-            end
-            
-            %begin new trial
+            obs = plot(fix(1),fix(2),'.g','markersize',20);
 
-            landmarks = generateLandmarks(scene,LANDMARK_COUNT);
-            particles = generateParticles(scene,landmarks,PARTICLE_COUNT);
+            pause(0.1);
+        end
+    else
+        % the action was to pick an object with a certain uncertainty
+        target = landmarks(action);
+        targetParticles = particles(action);
 
-            if DRAW
-                clearPlots(particlePlots,landmarkPlots);
-                landmarkPlots = drawLandmarks(landmarks);
-                particlePlots = drawParticles(particles);
+        %grasp considered succesful when the particle center is within
+        %object threshold distance 
+        distance = mean(targetParticles.positions) - [target.x target.y];
+        distance = sqrt(sum(distance.^2));
+
+        if distance < GRASP_THRESHOLD 
+            reward(t) = 15 + target.value * 10;
+        else
+            reward(t) = -100;
+        end
+
+        if DRAW
+            target = mean(targetParticles.positions);
+            target_plot = plot(target(1),target(2),'.k','markersize',20);
+
+            input(sprintf('Current reward : %d',reward(t)));
+
+            if exist('target_plot')
+                delete(target_plot);
             end
+        end
+
+        %begin new trial
+
+        landmarks = generateLandmarks(scene,LANDMARK_COUNT);
+        particles = generateParticles(scene,landmarks,PARTICLE_COUNT);
+
+        if DRAW
+            clearPlots(particlePlots,landmarkPlots);
+            landmarkPlots = drawLandmarks(landmarks);
+            particlePlots = drawParticles(particles);
+        end
     end
     
 
     
     %update the weights with the new reward
     beliefState = generateBeliefState(scene,landmarks,particles);
-    newPhi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
-%     newPhi = [ 1 beliefState ];
+%     newPhi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
+    newPhi = [ 1 beliefState ];
     valueNewBelief = newPhi * v;
     
     td_error = reward(t) + valueNewBelief - valueBelief;
@@ -125,12 +121,14 @@ for t=1:length(reward)
     
     actionNewValues = newPhi * W;
     
-%     switch action
-%         case size(W,2)
-%             W(:,action) = W(:,action) + 0.00005 * (actionNewValues(1) - actionValues(1) - actionValues(2)) * phi';
-%         otherwise 
-            W(:,action) = W(:,action) + 0.0005 * td_error * phi';
-%     end
+    if action > LANDMARK_COUNT
+        graspIndex = action - LANDMARK_COUNT;
+        W(:,action) = W(:,action) + ...
+            0.00005 * (actionNewValues(graspIndex) - actionValues(graspIndex) - actionValues(action)) * phi';
+%         W(:,action) = W(:,action) + 0.0005 * td_error * phi';
+    else
+        W(:,action) = W(:,action) + 0.0005 * td_error * phi';
+    end
     
 end
 
