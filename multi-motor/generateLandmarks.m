@@ -1,13 +1,14 @@
-function [landmarks] = generateLandmarks(scene,nr)    
+function [landmarks] = generateLandmarks(scene,nr) 
+    valuable = randi(nr);
     for i=1:nr
-        landmarks(i) = generateSingleLandmark(scene);
+        landmarks(i) = generateSingleLandmark(scene,valuable == i);
     end
 end
 
-function [landmark] = generateSingleLandmark(scene)
+function [landmark] = generateSingleLandmark(scene,valuable)
     landmark.x = randi(scene.width-50)+25;
     landmark.y = randi(scene.height-50)+25;
-    landmark.value = round(rand());
+    landmark.value = double(valuable);
     landmark.points = generateLandmarkShape(landmark);
     landmark.colour = getColour(landmark.value);
 end

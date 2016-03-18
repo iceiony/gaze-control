@@ -11,5 +11,5 @@ function [beliefStates] = generateBeliefState(scene,landmarks,particles)
         beliefStates(:,i) = [eigenValues' landmarks(i).value];
     end
     
-    beliefStates = [1 beliefStates(:)'];
+    beliefStates = beliefStates(:)';
 end
