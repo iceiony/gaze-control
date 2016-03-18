@@ -15,40 +15,36 @@ particles = generateParticles(scene,landmarks,PARTICLE_COUNT);
 %value function for each object ( one per grasping motor system )
 V = zeros(4,1);
 W = zeros(4,2); 
-WP = zeros(4,1); 
+WP = zeros(1 + 3*LANDMARK_COUNT,2); 
 
 reward = zeros(4000,1); %exact reward for each time step
 for t=1:length(reward)
     
-    if mod(t,10) == 0
+    if mod(t,100) == 0
         disp(t);
     end
     
     %execute gaze
-    gazeValues = zeros(LANDMARK_COUNT,1);
     phiOld = zeros(2,4);
-    for idx = 1 : LANDMARK_COUNT
-        phi = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
-        phiOld(idx,:) = phi;
-        gazeValues(idx) = phi * WP;
+    for idx = 1:LANDMARK_COUNT
+        phiOld(idx,:) = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
     end
     
-    [~,gazeLocation] = max(gazeValues);
-    chance = rand(1) >= 2;
-    gazeLocation = gazeLocation * chance + (1-chance) * randi(LANDMARK_COUNT);
+    phi = [1 generateBeliefState(scene,landmarks,particles)];
+%     gazeLocation = selectActionToTake(phi,WP);
+
+    gazeLocation = randi(LANDMARK_COUNT);
     
     fix = mean(particles(gazeLocation).positions);
     particles = updateParticleFilter(scene,particles,landmarks,fix);
     
     %update gaze weights
-    phiNew = [1 generateBeliefState(scene,landmarks(gazeLocation),particles(gazeLocation))];
-    gazeReward = sum(phiNew*W - phiOld(gazeLocation,:)*W);
-    WP = WP + 0.001 * ( gazeReward - gazeValues(gazeLocation)) * phiOld(gazeLocation,:)' ;
-%     for idx = 1 : LANDMARK_COUNT
-%         phiNew = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
-%         gazeReward = sum(phiNew * W - phiOld(idx,:) * W);
-%         WP = WP + 0.01 * ( gazeReward - sum(gazeValues)) * phiOld(gazeLocation,:)' ;
-%     end
+    gazeReward = 0 ;
+    for idx = 1:LANDMARK_COUNT
+        phiNew = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
+        gazeReward = gazeReward + sum(phiNew * W - phiOld(idx,:) * W);
+    end
+    WP(:,gazeLocation) = WP(:,gazeLocation) + 0.0005 * gazeReward * phi';
     
     %decide to grasp or not    
     phiOld = zeros(2,4);

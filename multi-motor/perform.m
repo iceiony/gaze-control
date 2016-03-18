@@ -5,23 +5,14 @@ reward = zeros(3000,1); %exact reward for each time step
 gazeLocations = zeros(size(reward));
 for t=1:length(reward)
     
-    if mod(t,10) == 0
+    if mod(t,100) == 0
         disp(t);
     end
     
     %execute gaze
-    gazeValues = zeros(LANDMARK_COUNT,1);
-    phiOld = zeros(2,4);
-    for idx = 1 : LANDMARK_COUNT
-        phi = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
-        phiOld(idx,:) = phi;
-        gazeValues = phi * WP;
-    end
-    
-%     gazeLocation = randi(LANDMARK_COUNT);
-    [~,gazeLocation] = max(gazeValues);
-%     chance = rand(1) >= 0;
-%     gazeLocation = gazeLocation * chance + (1-chance) * randi(LANDMARK_COUNT);
+%     phi = [1 generateBeliefState(scene,landmarks,particles)];
+%     gazeLocation = selectActionToTake(phi,WP);
+    gazeLocation = randi(LANDMARK_COUNT);
     
     fix = mean(particles(gazeLocation).positions);
     particles = updateParticleFilter(scene,particles,landmarks,fix);
@@ -32,11 +23,7 @@ for t=1:length(reward)
     for idx = 1:LANDMARK_COUNT
         actionRewards(idx) = -1;
         
-%         phi = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
-%         actionProbabilities = exp(phi*W);
-%         actionProbabilities = actionProbabilities / sum(actionProbabilities);
-%         [~,actionTaken] = max(actionProbabilities);
-        
+        phi = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
         actionTaken = selectActionToTake(phi,W);
         
         if actionTaken ~= 1
@@ -73,6 +60,6 @@ sum_reward_window = sum_reward_window(windowSize:end-windowSize);
 plot(sum_reward_window);
 xlabel('time steps')
 ylabel('total reward');
-% 
+ 
 hold on;
 plot(load('randFixationLinear.txt'));

@@ -8,10 +8,13 @@ for k = 1:length(interval)
     
     action_probability = exp(phi*W);
     values(k,:) = action_probability ./ sum(action_probability);
-%     values(k,:) = phi*W;
 end
 
 figure();
-plot(values);
+plot(1-interval,values);
 legend('grab','not grab');
 
+axis([0 1 0 1]);
+
+xlabel('certainty');
+ylabel('probability');
