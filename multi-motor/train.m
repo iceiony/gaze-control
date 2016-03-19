@@ -12,10 +12,16 @@ scene = struct('width',700,'height',500);
 landmarks = generateLandmarks(scene,LANDMARK_COUNT);
 particles = generateParticles(scene,landmarks,PARTICLE_COUNT);
 
-%value function for each object ( one per grasping motor system )
+%grasp system weights 
 V = zeros(4,1);
 W = zeros(4,2); 
-WP = zeros(1 + 3*LANDMARK_COUNT,2); 
+
+%gaze system weights
+hiddenSize = [20,30];
+WP{1} = rand(3*LANDMARK_COUNT,hiddenSize(1)) - .5; 
+WP{2} = rand(1 + hiddenSize(1),hiddenSize(2)) - .5;
+WP{3} = rand(1 + hiddenSize(2), 2);
+sigmoid = @(in,W) 1 ./ ( 1 + exp(-in*W)) - .5;
 
 reward = zeros(4000,1); %exact reward for each time step
 for t=1:length(reward)
@@ -24,39 +30,45 @@ for t=1:length(reward)
         disp(t);
     end
     
-    %execute gaze
-    phiOld = zeros(2,4);
-    for idx = 1:LANDMARK_COUNT
-        phiOld(idx,:) = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
-    end
-    
-    phi = [1 generateBeliefState(scene,landmarks,particles)];
-%     gazeLocation = selectActionToTake(phi,WP);
+    %---------------GAZING------------------
+    gazeBeliefState = generateBeliefState(scene,landmarks,particles);
+    out{1} = [1 sigmoid(gazeBeliefState, WP{1})];
+    out{2} = [1 sigmoid(out{1}, WP{2})];
+   
+    gazeLocation = selectActionToTake(out{2},WP{3});
 
-    gazeLocation = randi(LANDMARK_COUNT);
-    
     fix = mean(particles(gazeLocation).positions);
-    particles = updateParticleFilter(scene,particles,landmarks,fix);
+    particlesNew = updateParticleFilter(scene,particles,landmarks,fix);
     
     %update gaze weights
     gazeReward = 0 ;
     for idx = 1:LANDMARK_COUNT
-        phiNew = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
-        gazeReward = gazeReward + sum(phiNew * W - phiOld(idx,:) * W);
+        phiOld = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
+        phiNew = [1 generateBeliefState(scene,landmarks(idx),particlesNew(idx))];
+        gazeReward = gazeReward + sum(phiNew * W(:,1) - phiOld * W(:,1));
     end
-    WP(:,gazeLocation) = WP(:,gazeLocation) + 0.0005 * gazeReward * phi';
     
-    %decide to grasp or not    
+    gazeValue = out{2}*WP{3}(:,gazeLocation);
+    
+    
+    hiddDiff2 = ( WP{3}(:,gazeLocation) * (gazeReward - gazeValue) )' .*  out{2} .* ( 1 - out{2}) ;
+    hiddDiff1 = ( WP{2} *  hiddDiff2(2:end)' )' .*  out{1} .* ( 1 - out{1}) ;
+    
+    WP{1} = WP{1} + 0.001 * gazeBeliefState' * hiddDiff1(2:end);
+    WP{2} = WP{2} + 0.001 * out{1}' * hiddDiff2(2:end);
+    WP{3}(:,gazeLocation) = WP{3}(:,gazeLocation) + 0.001 * out{2}' * (gazeReward - gazeValue) ;
+    
+    particles = particlesNew; 
+    
+    %--------------GRASPING-----------------
     phiOld = zeros(2,4);
     actionRewards = zeros(2,1);
     actionTaken = zeros(2,1);
     for idx = 1:LANDMARK_COUNT
         actionRewards(idx) = -1;
         
-        phi = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
-        actionTaken(idx) = selectActionToTake(phi,W);
-        
-        phiOld(idx,:) = phi;
+        phiOld(idx,:) = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
+        actionTaken(idx) = selectActionToTake(phiOld(idx,:),W);
         
         if actionTaken(idx) ~= 1
             continue;

@@ -7,7 +7,7 @@ for k = 1:length(interval)
 %         phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
         phi = [ 1 beliefState];
 
-        values(k,j) =  phi * W(:,1);
+        values(k,j) =  phi * W(:,2);
     end
 end
 
