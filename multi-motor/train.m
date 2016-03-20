@@ -13,7 +13,7 @@ landmarks = generateLandmarks(scene,LANDMARK_COUNT);
 particles = generateParticles(scene,landmarks,PARTICLE_COUNT);
 
 %grasp system weights 
-[mu,sigma] = generateBeliefPoints(50,3);
+[mu,sigma] = generateBeliefPoints(25,3);
 kernel = @(x) gaussianKernel(x,mu,sigma);
 V = zeros(1 + size(mu,1),1);
 W = zeros(1 + size(mu,1),2); 
@@ -35,8 +35,8 @@ for t=1:length(reward)
     gazeBeliefState = generateBeliefState(scene,landmarks,particles);
     phi = [1 kernelP(gazeBeliefState)];
    
-    gazeLocation = randi(LANDMARK_COUNT);
-%     gazeLocation = selectActionToTake(phi,WP);
+%     gazeLocation = randi(LANDMARK_COUNT);
+    gazeLocation = selectActionToTake(phi,WP);
 
     fix = mean(particles(gazeLocation).positions);
     particlesNew = updateParticleFilter(scene,particles,landmarks,fix);
@@ -54,9 +54,9 @@ for t=1:length(reward)
     end
     
     gazeValue = phi * VP;
-    VP = VP + 0.01 * phi' * (gazeReward - gazeValue) ;
+    VP = VP + 0.2 * phi' * (gazeReward - gazeValue) ;
     
-    WP(:,gazeLocation) = WP(:,gazeLocation) + 0.005 * phi' * (gazeReward - gazeValue);
+    WP(:,gazeLocation) = WP(:,gazeLocation) + 0.1 * phi' * (gazeReward - gazeValue);
     
     particles = particlesNew; 
     

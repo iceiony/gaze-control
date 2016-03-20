@@ -17,7 +17,6 @@ plot(1-interval,values);
 values = [];
 for k = 1:length(interval)
     beliefState  = [ interval(k) interval(k) 0];
-%     phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
     phi = [1 kernel(beliefState)];
     
     values(k,:) = phi * W;
