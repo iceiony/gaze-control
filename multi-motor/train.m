@@ -1,7 +1,7 @@
 clear all;
 close all;
 
-GRASP_THRESHOLD = 10;
+GRASP_THRESHOLD = 5;
 LANDMARK_COUNT = 2;
 PARTICLE_COUNT = 200;
 
@@ -13,15 +13,16 @@ landmarks = generateLandmarks(scene,LANDMARK_COUNT);
 particles = generateParticles(scene,landmarks,PARTICLE_COUNT);
 
 %grasp system weights 
-V = zeros(4,1);
-W = zeros(4,2); 
+[mu,sigma] = generateBeliefPoints(50,3);
+kernel = @(x) gaussianKernel(x,mu,sigma);
+V = zeros(1 + size(mu,1),1);
+W = zeros(1 + size(mu,1),2); 
 
 %gaze system weights
-hiddenSize = [20,30];
-WP{1} = rand(3*LANDMARK_COUNT,hiddenSize(1)) - .5; 
-WP{2} = rand(1 + hiddenSize(1),hiddenSize(2)) - .5;
-WP{3} = rand(1 + hiddenSize(2), 2);
-sigmoid = @(in,W) 1 ./ ( 1 + exp(-in*W)) - .5;
+[muP,sigmaP] = generateBeliefPoints(50,3*LANDMARK_COUNT);
+kernelP = @(x) gaussianKernel(x,muP,sigmaP);
+VP = zeros(1+size(muP,1),1);
+WP = zeros(1+size(muP,1),2);
 
 reward = zeros(4000,1); %exact reward for each time step
 for t=1:length(reward)
@@ -32,10 +33,10 @@ for t=1:length(reward)
     
     %---------------GAZING------------------
     gazeBeliefState = generateBeliefState(scene,landmarks,particles);
-    out{1} = [1 sigmoid(gazeBeliefState, WP{1})];
-    out{2} = [1 sigmoid(out{1}, WP{2})];
+    phi = [1 kernelP(gazeBeliefState)];
    
-    gazeLocation = selectActionToTake(out{2},WP{3});
+    gazeLocation = randi(LANDMARK_COUNT);
+%     gazeLocation = selectActionToTake(phi,WP);
 
     fix = mean(particles(gazeLocation).positions);
     particlesNew = updateParticleFilter(scene,particles,landmarks,fix);
@@ -43,31 +44,31 @@ for t=1:length(reward)
     %update gaze weights
     gazeReward = 0 ;
     for idx = 1:LANDMARK_COUNT
-        phiOld = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
-        phiNew = [1 generateBeliefState(scene,landmarks(idx),particlesNew(idx))];
-        gazeReward = gazeReward + sum(phiNew * W(:,1) - phiOld * W(:,1));
+        beliefStateOld = generateBeliefState(scene,landmarks(idx),particles(idx));
+        phiOld = [1 kernel(beliefStateOld)];
+        
+        beliefStateNew = generateBeliefState(scene,landmarks(idx),particlesNew(idx));
+        phiNew = [1 kernel(beliefStateNew)];
+        
+        gazeReward = sum(phiNew * W(:,1) - phiOld * W(:,1));
     end
     
-    gazeValue = out{2}*WP{3}(:,gazeLocation);
+    gazeValue = phi * VP;
+    VP = VP + 0.01 * phi' * (gazeReward - gazeValue) ;
     
-    
-    hiddDiff2 = ( WP{3}(:,gazeLocation) * (gazeReward - gazeValue) )' .*  out{2} .* ( 1 - out{2}) ;
-    hiddDiff1 = ( WP{2} *  hiddDiff2(2:end)' )' .*  out{1} .* ( 1 - out{1}) ;
-    
-    WP{1} = WP{1} + 0.001 * gazeBeliefState' * hiddDiff1(2:end);
-    WP{2} = WP{2} + 0.001 * out{1}' * hiddDiff2(2:end);
-    WP{3}(:,gazeLocation) = WP{3}(:,gazeLocation) + 0.001 * out{2}' * (gazeReward - gazeValue) ;
+    WP(:,gazeLocation) = WP(:,gazeLocation) + 0.005 * phi' * (gazeReward - gazeValue);
     
     particles = particlesNew; 
     
     %--------------GRASPING-----------------
-    phiOld = zeros(2,4);
+    phiOld = zeros(2,size(V,1));
     actionRewards = zeros(2,1);
     actionTaken = zeros(2,1);
     for idx = 1:LANDMARK_COUNT
         actionRewards(idx) = -1;
         
-        phiOld(idx,:) = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
+        beliefStateOld = generateBeliefState(scene,landmarks(idx),particles(idx));
+        phiOld(idx,:) = [1 kernel(beliefStateOld)];
         actionTaken(idx) = selectActionToTake(phiOld(idx,:),W);
         
         if actionTaken(idx) ~= 1
@@ -96,7 +97,8 @@ for t=1:length(reward)
     
     %update grasp weights
     for idx = 1 : LANDMARK_COUNT
-        phiNew = [1 generateBeliefState(scene,landmarks(idx),particles(idx))];
+        beliefStateNew = generateBeliefState(scene,landmarks(idx),particles(idx));
+        phiNew = [1 kernel(beliefStateNew)];
         
         beliefValues    = phiOld(idx,:) * V;
         beliefValuesNew = phiNew        * V;
@@ -116,6 +118,3 @@ sum_reward_window = sum_reward_window(windowSize:end-windowSize);
 plot(sum_reward_window);
 xlabel('time steps')
 ylabel('total reward');
-
-% pause(0.1);
-% perform;

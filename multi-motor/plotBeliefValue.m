@@ -3,11 +3,10 @@ values = zeros(length(interval));
 
 for k = 1:length(interval)
     for j = 1:length(interval) 
-        beliefState = [ interval(k) interval(j) 1];
-%         phi = [1 estimateBeliefPoints(beliefState,mu,sigma)];
-        phi = [ 1 beliefState];
+        beliefState = [ interval(k) interval(j) 0];
+        phi = [ 1 kernel(beliefState)];
 
-        values(k,j) =  phi * W(:,2);
+        values(k,j) =  phi * W(:,1);
     end
 end
 
