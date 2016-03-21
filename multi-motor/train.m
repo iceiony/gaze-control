@@ -24,7 +24,7 @@ kernelP = @(x) gaussianKernel(x,muP,sigmaP);
 VP = zeros(1+size(muP,1),1);
 WP = zeros(1+size(muP,1),2);
 
-reward = zeros(4000,1); %exact reward for each time step
+reward = zeros(14000,1); %exact reward for each time step
 for t=1:length(reward)
     
     if mod(t,100) == 0
@@ -50,13 +50,13 @@ for t=1:length(reward)
         beliefStateNew = generateBeliefState(scene,landmarks(idx),particlesNew(idx));
         phiNew = [1 kernel(beliefStateNew)];
         
-%         oldProb = exp(phiOld * W);
-%         oldProb = oldProb / sum(oldProb);
-%         
-%         newProb = exp(phiNew * W);
-%         newProb = newProb / sum(newProb);
+        oldProb = exp(phiOld * W);
+        oldProb = oldProb / sum(oldProb);
         
-        gazeReward = gazeReward + sum(phiNew * W(:,1) - phiOld * W(:,1));
+        newProb = exp(phiNew * W);
+        newProb = newProb / sum(newProb);
+        
+        gazeReward = gazeReward + sum(newProb(1) - oldProb(1));
     end
     
     gazeValue = phi * VP;
@@ -111,11 +111,11 @@ for t=1:length(reward)
         beliefValuesNew = phiNew        * V;
         
         td_error = actionRewards(idx) + beliefValuesNew - beliefValues;
-        V = V + 0.001 * phiOld(idx,:)' * td_error;   
-        W(:,actionTaken(idx)) = W(:,actionTaken(idx)) + 0.0005 * phiOld(idx,:)' * td_error;
+        V = V + 0.0005 * phiOld(idx,:)' * td_error;   
+        W(:,actionTaken(idx)) = W(:,actionTaken(idx)) + 0.00025 * phiOld(idx,:)' * td_error;
         
-        diffs = 2 * (repmat(beliefStateOld(idx,:),size(mu,1),1) - mu) / sigma(1)^2;
-        mu = mu + 2.5 * 10^-9 * td_error * phiOld(idx,:) * V * diffs;
+%         diffs = 2 * (repmat(beliefStateOld(idx,:),size(mu,1),1) - mu) / sigma(1)^2;
+%         mu = mu + 2.5 * 10^-9 * td_error * phiOld(idx,:) * V * diffs;
     end
     
     reward(t) = sum(actionRewards);
