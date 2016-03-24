@@ -18,12 +18,6 @@ kernel = @(x) gaussianKernel(x,mu,sigma);
 V = zeros(1 + size(mu,1),1);
 W = zeros(1 + size(mu,1),2); 
 
-%gaze system weights
-[muP,sigmaP] = generateBeliefPoints(60,3*LANDMARK_COUNT,.25);
-kernelP = @(x) gaussianKernel(x,muP,sigmaP);
-VP = zeros(1+size(muP,1),1);
-WP = zeros(1+size(muP,1),2);
-
 reward = zeros(14000,1); %exact reward for each time step
 for t=1:length(reward)
     
@@ -32,42 +26,11 @@ for t=1:length(reward)
     end
     
     %---------------GAZING------------------
-    gazeBeliefState = generateBeliefState(scene,landmarks,particles);
-    phi = [1 kernelP(gazeBeliefState)];
    
-%     gazeLocation = randi(LANDMARK_COUNT);
-    gazeLocation = selectActionToTake(phi,WP);
+    gazeLocation = randi(LANDMARK_COUNT);
 
     fix = mean(particles(gazeLocation).positions);
-    particlesNew = updateParticleFilter(scene,particles,landmarks,fix);
-    
-%     update gaze weights
-    gazeReward = 0 ;
-    for idx = 1:LANDMARK_COUNT
-        beliefStateOld = generateBeliefState(scene,landmarks(idx),particles(idx));
-        phiOld = [1 kernel(beliefStateOld)];
-        
-        beliefStateNew = generateBeliefState(scene,landmarks(idx),particlesNew(idx));
-        phiNew = [1 kernel(beliefStateNew)];
-        
-        oldProb = exp(phiOld * W);
-        oldProb = oldProb / sum(oldProb);
-        
-        newProb = exp(phiNew * W);
-        newProb = newProb / sum(newProb);
-        
-        gazeReward = gazeReward + sum(newProb(1) - oldProb(1));
-    end
-    
-    gazeValue = phi * VP;
-    
-    diffs = 2 * (repmat(gazeBeliefState,size(muP,1),1) - muP) / sigmaP(1)^2;
-    muP = muP + 2.5 * 10^-9 * (gazeReward - gazeValue) * phi * VP * diffs;
-    
-    VP = VP + 0.2 * phi' * (gazeReward - gazeValue) ;    
-    WP(:,gazeLocation) = WP(:,gazeLocation) + 0.1 * phi' * (gazeReward - gazeValue);
-    
-    particles = particlesNew; 
+    particles = updateParticleFilter(scene,particles,landmarks,fix);
     
     %--------------GRASPING-----------------
     phiOld = zeros(LANDMARK_COUNT,size(V,1));
@@ -114,9 +77,9 @@ for t=1:length(reward)
         beliefValuesNew = phiNew        * V;
         
         td_error = actionRewards(idx) + beliefValuesNew - beliefValues;
-        
+                
         diffs = 2 * (repmat(beliefStateOld(idx,:),size(mu,1),1) - mu) / sigma(1)^2;
-        mu = mu + 2.5 * 10^-9 * td_error * phiOld(idx,:) * V * diffs;        
+        mu = mu + 2.5 * 10^-9 * td_error * phiOld(idx,:) * V * diffs;
         
         V = V + 0.003 * phiOld(idx,:)' * td_error;   
         W(:,actionTaken(idx)) = W(:,actionTaken(idx)) + 0.0015 * phiOld(idx,:)' * td_error;
