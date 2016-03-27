@@ -9,7 +9,7 @@ SYSTEM_NOISE = [60 60];
         
         %noise levels decrease the closer we are to the to object
         measureNoise = SYSTEM_NOISE .* abs(measure) ./ [scene.width scene.height];
-        measure = mvnrnd(measure,measureNoise);
+        observation = mvnrnd(measure,measureNoise);
         
          
         %calculate the probability of each particle 
@@ -22,7 +22,7 @@ SYSTEM_NOISE = [60 60];
             sigma = buildCovariance(estimate);
             
             noise(j,:) = abs(estimate) + SYSTEM_NOISE/2;
-            prob(j) = mvnpdf(measure, estimate, sigma);
+            prob(j) = mvnpdf(observation, estimate, sigma);
         end
         
         weights = prob ./ sum(prob);

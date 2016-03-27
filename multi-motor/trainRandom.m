@@ -3,7 +3,7 @@ close all;
 
 GRASP_THRESHOLD = 5;
 LANDMARK_COUNT = 2;
-PARTICLE_COUNT = 200;
+PARTICLE_COUNT = 100;
 
 %initialise sceneç 
 rng('shuffle');
@@ -13,12 +13,12 @@ landmarks = generateLandmarks(scene,LANDMARK_COUNT);
 particles = generateParticles(scene,landmarks,PARTICLE_COUNT);
 
 %grasp system weights 
-[mu,sigma] = generateBeliefPoints(30,3,.25);
+[mu,sigma] = generateBeliefPoints(60,3,.25);
 kernel = @(x) gaussianKernel(x,mu,sigma);
 V = zeros(1 + size(mu,1),1);
 W = zeros(1 + size(mu,1),2); 
 
-reward = zeros(14000,1); %exact reward for each time step
+reward = zeros(4000,1); %exact reward for each time step
 for t=1:length(reward)
     
     if mod(t,100) == 0
@@ -26,11 +26,12 @@ for t=1:length(reward)
     end
     
     %---------------GAZING------------------
-   
-    gazeLocation = randi(LANDMARK_COUNT);
+    for gazeTime = 1:3
+        gazeLocation = randi(LANDMARK_COUNT);
 
-    fix = mean(particles(gazeLocation).positions);
-    particles = updateParticleFilter(scene,particles,landmarks,fix);
+        fix = mean(particles(gazeLocation).positions);
+        particles = updateParticleFilter(scene,particles,landmarks,fix);   
+    end
     
     %--------------GRASPING-----------------
     phiOld = zeros(LANDMARK_COUNT,size(V,1));
@@ -55,19 +56,17 @@ for t=1:length(reward)
         distance = mean(targetParticles.positions) - [targetLandmark.x targetLandmark.y];
         distance = sqrt(sum(distance.^2));
 
-        if distance < GRASP_THRESHOLD + targetLandmark.value * 10
+        if distance < GRASP_THRESHOLD + targetLandmark.value * 3
             actionRewards(idx) = 15 + targetLandmark.value * 30;
         else
             actionRewards(idx) = -100;
         end  
     end
     
-    if any(actionTaken == 1) 
-        %begin new trial
-        landmarks = generateLandmarks(scene,LANDMARK_COUNT);
-        particles = generateParticles(scene,landmarks,PARTICLE_COUNT);
-    end
-    
+    %begin new trial
+    landmarks = generateLandmarks(scene,LANDMARK_COUNT);
+    particles = generateParticles(scene,landmarks,PARTICLE_COUNT);
+
     %update grasp weights
     for idx = 1 : LANDMARK_COUNT
         beliefStateNew = generateBeliefState(scene,landmarks(idx),particles(idx));
@@ -77,12 +76,12 @@ for t=1:length(reward)
         beliefValuesNew = phiNew        * V;
         
         td_error = actionRewards(idx) + beliefValuesNew - beliefValues;
-                
-        diffs = 2 * (repmat(beliefStateOld(idx,:),size(mu,1),1) - mu) / sigma(1)^2;
-        mu = mu + 2.5 * 10^-9 * td_error * phiOld(idx,:) * V * diffs;
         
-        V = V + 0.003 * phiOld(idx,:)' * td_error;   
-        W(:,actionTaken(idx)) = W(:,actionTaken(idx)) + 0.0015 * phiOld(idx,:)' * td_error;
+%         diffs = 2 * (repmat(beliefStateOld(idx,:),size(mu,1),1) - mu) / sigma(1)^2;
+%         mu = mu + 2.5 * 10^-9 * td_error * phiOld(idx,:) * V * diffs;        
+        
+        V = V + 0.001 * phiOld(idx,:)' * td_error;   
+        W(:,actionTaken(idx)) = W(:,actionTaken(idx)) + 0.0005 * phiOld(idx,:)' * td_error;
     end
     
     reward(t) = sum(actionRewards);
