@@ -24,7 +24,7 @@ kernelP = @(x) gaussianKernel(x,muP,sigmaP);
 VP = zeros(1+size(muP,1),1);
 WP = zeros(1+size(muP,1),2);
 
-reward = zeros(4000,1); %exact reward for each time step
+reward = zeros(6000,1); %exact reward for each time step
 for t=1:length(reward)
     
     if mod(t,100) == 0
