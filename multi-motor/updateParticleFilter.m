@@ -8,7 +8,7 @@ SYSTEM_NOISE = [60 60];
         measure = [landmarks(i).x - fix(1) landmarks(i).y - fix(2)];
         
         %noise levels decrease the closer we are to the to object
-        measureNoise = SYSTEM_NOISE .* abs(measure) ./ [scene.width scene.height];
+        measureNoise = SYSTEM_NOISE .* sqrt(abs(measure) ./ [scene.width scene.height]);
         observation = mvnrnd(measure,measureNoise);
         
          
