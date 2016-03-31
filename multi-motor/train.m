@@ -1,11 +1,11 @@
 clear all; 
 close all;
 
-GRASP_THRESHOLD = 5;
+GRASP_THRESHOLD = 11;
 LANDMARK_COUNT = 2;
-PARTICLE_COUNT = 100;
+PARTICLE_COUNT = 200;
 
-%initialise sceneç 
+%initialise scene
 rng('shuffle');
 scene = struct('width',700,'height',500);
 
@@ -19,12 +19,12 @@ V = zeros(1 + size(mu,1),1);
 W = zeros(1 + size(mu,1),2); 
 
 %gaze system weights
-[muP,sigmaP] = generateBeliefPoints(90,3*LANDMARK_COUNT,.25);
+[muP,sigmaP] = generateBeliefPoints(180,3*LANDMARK_COUNT,.25);
 kernelP = @(x) gaussianKernel(x,muP,sigmaP);
 VP = zeros(1+size(muP,1),1);
 WP = zeros(1+size(muP,1),2);
 
-reward = zeros(6000,1); %exact reward for each time step
+reward = zeros(8000,1); %exact reward for each time step
 for t=1:length(reward)
     
     if mod(t,100) == 0
@@ -32,7 +32,7 @@ for t=1:length(reward)
     end
     
     %---------------GAZING------------------
-    for gazeTime = 1:3
+    for gazeTime = 1:2
         gazeBeliefState = generateBeliefState(scene,landmarks,particles);
         phi = [1 kernelP(gazeBeliefState)];
 
@@ -65,8 +65,8 @@ for t=1:length(reward)
 %         diffs = 2 * (repmat(gazeBeliefState,size(muP,1),1) - muP) / sigmaP(1)^2;
 %         muP = muP + 2.5 * 10^-9 * (gazeReward - gazeValue) * phi * VP * diffs;
 
-        VP = VP + 1 * phi' * (gazeReward - gazeValue) ;    
-        WP(:,gazeLocation) = WP(:,gazeLocation) + 0.5 * phi' * (gazeReward - gazeValue);
+        VP = VP + 0.8 * phi' * (gazeReward - gazeValue) ;    
+        WP(:,gazeLocation) = WP(:,gazeLocation) + 0.4 * phi' * (gazeReward - gazeValue);
 
         particles = particlesNew;
     
@@ -95,8 +95,8 @@ for t=1:length(reward)
         distance = mean(targetParticles.positions) - [targetLandmark.x targetLandmark.y];
         distance = sqrt(sum(distance.^2));
 
-        if distance < GRASP_THRESHOLD + targetLandmark.value * 3
-            actionRewards(idx) = 15 + targetLandmark.value * 30;
+        if distance < GRASP_THRESHOLD %+ targetLandmark.value * 5
+            actionRewards(idx) = 10 + targetLandmark.value * 30;
         else
             actionRewards(idx) = -100;
         end  

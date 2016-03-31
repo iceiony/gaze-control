@@ -21,7 +21,7 @@ SYSTEM_NOISE = [60 60];
                   
             sigma = buildCovariance(estimate);
             
-            noise(j,:) = abs(estimate) + SYSTEM_NOISE/2;
+            noise(j,:) = abs(estimate) + SYSTEM_NOISE/3;
             prob(j) = mvnpdf(observation, estimate, sigma);
         end
         

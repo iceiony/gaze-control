@@ -1,11 +1,11 @@
 clear all; 
 close all;
 
-GRASP_THRESHOLD = 5;
+GRASP_THRESHOLD = 11;
 LANDMARK_COUNT = 2;
-PARTICLE_COUNT = 100;
+PARTICLE_COUNT = 200;
 
-%initialise sceneç 
+%initialise scene
 rng('shuffle');
 scene = struct('width',700,'height',500);
 
@@ -18,7 +18,7 @@ kernel = @(x) gaussianKernel(x,mu,sigma);
 V = zeros(1 + size(mu,1),1);
 W = zeros(1 + size(mu,1),2); 
 
-reward = zeros(6000,1); %exact reward for each time step
+reward = zeros(8000,1); %exact reward for each time step
 for t=1:length(reward)
     
     if mod(t,100) == 0
@@ -26,11 +26,13 @@ for t=1:length(reward)
     end
     
     %---------------GAZING------------------
-    for gazeTime = 1:3
+    for gazeTime = 1:2
+ 
         gazeLocation = randi(LANDMARK_COUNT);
-
+ 
         fix = mean(particles(gazeLocation).positions);
-        particles = updateParticleFilter(scene,particles,landmarks,fix);   
+        particles = updateParticleFilter(scene,particles,landmarks,fix);
+
     end
     
     %--------------GRASPING-----------------
@@ -56,8 +58,8 @@ for t=1:length(reward)
         distance = mean(targetParticles.positions) - [targetLandmark.x targetLandmark.y];
         distance = sqrt(sum(distance.^2));
 
-        if distance < GRASP_THRESHOLD + targetLandmark.value * 3
-            actionRewards(idx) = 15 + targetLandmark.value * 30;
+        if distance < GRASP_THRESHOLD %+ targetLandmark.value * 5
+            actionRewards(idx) = 10 + targetLandmark.value * 30;
         else
             actionRewards(idx) = -100;
         end  
