@@ -21,7 +21,7 @@ W = zeros(1 + size(mu,1),2);
 reward = zeros(8000,1); %exact reward for each time step
 for t=1:length(reward)
     
-    if mod(t,100) == 0
+    if mod(t,2000) == 0
         disp(t);
     end
     
