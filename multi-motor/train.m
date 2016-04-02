@@ -1,9 +1,9 @@
 clear all; 
 close all;
 
-GRASP_THRESHOLD = 11;
+GRASP_THRESHOLD = 19;
 LANDMARK_COUNT = 2;
-PARTICLE_COUNT = 200;
+PARTICLE_COUNT = 100;
 
 %initialise scene
 rng('shuffle');
