@@ -3,7 +3,7 @@ try
     reward_try = [];
     while true
         train;
-        file_name = '17_learntGaze.txt';
+        file_name = '18_learntGaze.txt';
         reward_try = load(file_name);
         reward_try(end+1,:) = sum_reward_window;
         save(file_name,'reward_try','-ascii');
@@ -19,7 +19,7 @@ try
     reward_try = [];
     while true
         trainRandom;
-        file_name = '17_randomGaze.txt';
+        file_name = '18_randomGaze.txt';
         
         reward_try = load(file_name);
         reward_try(end+1,:) = sum_reward_window;
@@ -32,8 +32,5 @@ try
         end
     end
 catch exception
-    disp(e)
+    disp(exception)
 end
-    
-load handel
-sound(y,Fs)
