@@ -3,7 +3,7 @@ close all;
 
 GRASP_THRESHOLD = 19;
 LANDMARK_COUNT = 2;
-PARTICLE_COUNT = 200;
+PARTICLE_COUNT = 100;
 
 %initialise scene
 rng('shuffle');
@@ -27,12 +27,9 @@ for t=1:length(reward)
     
     %---------------GAZING------------------
     for gazeTime = 1:2
- 
         gazeLocation = randi(LANDMARK_COUNT);
- 
         fix = mean(particles(gazeLocation).positions);
         particles = updateParticleFilter(scene,particles,landmarks,fix);
-
     end
     
     %--------------GRASPING-----------------
