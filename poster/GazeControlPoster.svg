@@ -361,11 +361,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.64"
-     inkscape:cx="917.67748"
-     inkscape:cy="876.46165"
+     inkscape:zoom="1.28"
+     inkscape:cx="1158.8393"
+     inkscape:cy="241.30194"
      inkscape:document-units="px"
-     inkscape:current-layer="layer9"
+     inkscape:current-layer="layer11"
      showgrid="false"
      inkscape:window-width="1440"
      inkscape:window-height="784"
@@ -2375,7 +2375,8 @@
            x="857.367"
            y="1881.5438"
            style="font-size:15px;text-align:start;text-anchor:start" /></flowRegion><flowPara
-         id="flowPara4752">[1] Nunez-Varela, J. and Wyatt, J. L. (2013) ‘Models of gaze control for manipulation tasks’, ACM Transactions on Applied Perception, 10(4), pp. 1-22. doi: 10.1145/2536764.2536767.</flowPara><flowPara
+         id="flowPara4752">[1] Nunez-Varela, J. and Wyatt, J. L. (2013) ‘Models of gaze control for manipulation tasks’, ACM Transactions on Applied Perception, 10(4), pp. 1-22. </flowPara><flowPara
+         id="flowPara4726">doi: 10.1145/2536764.2536767.</flowPara><flowPara
          id="flowPara4758" /><flowPara
          id="flowPara4754">[2] Rao, R. P. N. (2010). Decision making under uncertainty: A neural model based on partially observable Markov decision processes. Frontiers in Computational Neuroscience, 4, . doi:10.3389/fncom.2010.00146</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
