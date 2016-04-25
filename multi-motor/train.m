@@ -1,9 +1,13 @@
+%Setup :
+% - agent is allowed a single fixation after the initiual visual stimulus 
+% - agent learns both GRASP and GAZE
+
 clear all; 
 close all;
 
-GRASP_THRESHOLD = 19;
+GRASP_THRESHOLD = 11;
 LANDMARK_COUNT = 2;
-PARTICLE_COUNT = 100;
+PARTICLE_COUNT = 200;
 
 %initialise scene
 rng('shuffle');
@@ -95,7 +99,7 @@ for t=1:length(reward)
         distance = mean(targetParticles.positions) - [targetLandmark.x targetLandmark.y];
         distance = sqrt(sum(distance.^2));
 
-        if distance < GRASP_THRESHOLD %+ targetLandmark.value * 5
+        if distance < GRASP_THRESHOLD 
             actionRewards(idx) = 10 + targetLandmark.value * 30;
         else
             actionRewards(idx) = -100;

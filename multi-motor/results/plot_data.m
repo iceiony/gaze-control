@@ -1,7 +1,7 @@
 figure();
 hold on;
 
-learntGazeReward = load('18_learntGaze.txt');
+learntGazeReward = load('1_learntGazeTimeless.txt');
 % plot(learntGazeReward','b');
 mean_reward = mean(learntGazeReward);
 standard_error = std(learntGazeReward)/sqrt(size(learntGazeReward,1));
@@ -9,7 +9,7 @@ learningPlots = shadedErrorBar([],mean_reward,standard_error,'b',1);
 % plot(mean_reward,'b.');
 
 % 
-randomGazeReward = load('18_randomGaze.txt');
+randomGazeReward = load('1_randomGazeTimeless.txt');
 % plot(randomGazeReward','r');
 mean_reward = mean(randomGazeReward);
 standard_error = std(randomGazeReward)/sqrt(size(randomGazeReward,1));

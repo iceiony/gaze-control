@@ -1,11 +1,11 @@
 %Setup :
-% - agent is allowed a single fixation after the initiual visual stimulus 
-% - agent learns only GRASP
+% - agent is allowed as many fixations as it wants before making a decission 
+% - agent learns both GRASP and GAZE
 
 clear all; 
 close all;
 
-GRASP_THRESHOLD = 11;
+GRASP_THRESHOLD = 15;
 LANDMARK_COUNT = 2;
 PARTICLE_COUNT = 200;
 
@@ -22,7 +22,14 @@ kernel = @(x) gaussianKernel(x,mu,sigma);
 V = zeros(1 + size(mu,1),1);
 W = zeros(1 + size(mu,1),2); 
 
+%gaze system weights
+[muP,sigmaP] = generateBeliefPoints(180,3*LANDMARK_COUNT,.25);
+kernelP = @(x) gaussianKernel(x,muP,sigmaP);
+VP = zeros(1+size(muP,1),1);
+WP = zeros(1+size(muP,1),2);
+
 reward = zeros(8000,1); %exact reward for each time step
+gazeCount = zeros(length(reward),1);
 for t=1:length(reward)
     
     if mod(t,2000) == 0
@@ -30,11 +37,43 @@ for t=1:length(reward)
     end
     
     %---------------GAZING------------------
-    for gazeTime = 1:2
-        gazeLocation = randi(LANDMARK_COUNT);
-        fix = mean(particles(gazeLocation).positions);
-        particles = updateParticleFilter(scene,particles,landmarks,fix);
+    gazeCount(t) = 1;
+    gazeBeliefState = generateBeliefState(scene,landmarks,particles);
+    phi = [1 kernelP(gazeBeliefState)];
+   
+%     gazeLocation = randi(LANDMARK_COUNT);
+    gazeLocation = selectActionToTake(phi,WP);
+
+    fix = mean(particles(gazeLocation).positions);
+    particlesNew = updateParticleFilter(scene,particles,landmarks,fix);
+    
+%     update gaze weights
+    gazeReward = 0 ;
+    for idx = 1:LANDMARK_COUNT
+        beliefStateOld = generateBeliefState(scene,landmarks(idx),particles(idx));
+        phiOld = [1 kernel(beliefStateOld)];
+        
+        beliefStateNew = generateBeliefState(scene,landmarks(idx),particlesNew(idx));
+        phiNew = [1 kernel(beliefStateNew)];
+        
+        oldProb = exp(phiOld * W);
+        oldProb = oldProb / sum(oldProb);
+        
+        newProb = exp(phiNew * W);
+        newProb = newProb / sum(newProb);
+        
+        gazeReward = gazeReward + sum(newProb(1) - oldProb(1));
     end
+    
+    gazeValue = phi * VP;
+    
+%     diffs = 2 * (repmat(gazeBeliefState,size(muP,1),1) - muP) / sigmaP(1)^2;
+%     muP = muP + 2.5 * 10^-9 * (gazeReward - gazeValue) * phi * VP * diffs;
+    
+    VP = VP + 0.8 * phi' * (gazeReward - gazeValue) ;    
+    WP(:,gazeLocation) = WP(:,gazeLocation) + 0.4 * phi' * (gazeReward - gazeValue);
+    
+    particles = particlesNew; 
     
     %--------------GRASPING-----------------
     phiOld = zeros(LANDMARK_COUNT,size(V,1));
@@ -59,17 +98,20 @@ for t=1:length(reward)
         distance = mean(targetParticles.positions) - [targetLandmark.x targetLandmark.y];
         distance = sqrt(sum(distance.^2));
 
-        if distance < GRASP_THRESHOLD %+ targetLandmark.value * 5
+        if distance < GRASP_THRESHOLD
             actionRewards(idx) = 10 + targetLandmark.value * 30;
         else
             actionRewards(idx) = -100;
         end  
     end
     
-    %begin new trial
-    landmarks = generateLandmarks(scene,LANDMARK_COUNT);
-    particles = generateParticles(scene,landmarks,PARTICLE_COUNT);
-
+    if any(actionTaken == 1) 
+        %begin new trial
+        landmarks = generateLandmarks(scene,LANDMARK_COUNT);
+        particles = generateParticles(scene,landmarks,PARTICLE_COUNT);
+        gazeCount(t) = 0;
+    end
+    
     %update grasp weights
     for idx = 1 : LANDMARK_COUNT
         beliefStateNew = generateBeliefState(scene,landmarks(idx),particles(idx));
@@ -97,3 +139,9 @@ sum_reward_window = sum_reward_window(windowSize:end-windowSize);
 plot(sum_reward_window);
 xlabel('time steps')
 ylabel('total reward');
+
+figure();
+windowSize = 500; 
+gaze_count_window = conv(gazeCount,ones(1,windowSize));
+gaze_count_window = gaze_count_window(windowSize:end-windowSize);
+plot(gaze_count_window);
