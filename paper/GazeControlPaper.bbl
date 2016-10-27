@@ -1,0 +1,408 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.7 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\sortlist[entry]{nty/global/}
+  \entry{baylor1984}{article}{}
+    \name{author}{3}{}{%
+      {{hash=BDA}{%
+         family={Baylor},
+         family_i={B\bibinitperiod},
+         given={D\bibnamedelima A},
+         given_i={D\bibinitperiod\bibinitdelim A\bibinitperiod},
+      }}%
+      {{hash=NBJ}{%
+         family={Nunn},
+         family_i={N\bibinitperiod},
+         given={B\bibnamedelima J},
+         given_i={B\bibinitperiod\bibinitdelim J\bibinitperiod},
+      }}%
+      {{hash=SJL}{%
+         family={Schnapf},
+         family_i={S\bibinitperiod},
+         given={J\bibnamedelima L},
+         given_i={J\bibinitperiod\bibinitdelim L\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Wiley-Blackwell}%
+    }
+    \strng{namehash}{BDANBJSJL1}
+    \strng{fullhash}{BDANBJSJL1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{B}
+    \field{sortinithash}{B}
+    \verb{doi}
+    \verb 10.1113/jphysiol.1984.sp015518
+    \endverb
+    \field{issn}{0022-3751}
+    \field{number}{1}
+    \field{pages}{575\bibrangedash 607}
+    \field{title}{The photocurrent, noise and spectral sensitivity of rods of
+  the monkey Macaca fascicularis}
+    \field{volume}{357}
+    \field{journaltitle}{The Journal of Physiology}
+    \field{month}{12}
+    \field{year}{1984}
+  \endentry
+
+  \entry{field2002}{article}{}
+    \name{author}{2}{}{%
+      {{hash=FGD}{%
+         family={Field},
+         family_i={F\bibinitperiod},
+         given={Greg\bibnamedelima D.},
+         given_i={G\bibinitperiod\bibinitdelim D\bibinitperiod},
+      }}%
+      {{hash=RF}{%
+         family={Rieke},
+         family_i={R\bibinitperiod},
+         given={Fred},
+         given_i={F\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Elsevier BV}%
+    }
+    \strng{namehash}{FGDRF1}
+    \strng{fullhash}{FGDRF1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{F}
+    \field{sortinithash}{F}
+    \verb{doi}
+    \verb 10.1016/s0896-6273(02)00700-6
+    \endverb
+    \field{issn}{0896-6273}
+    \field{number}{5}
+    \field{pages}{773\bibrangedash 785}
+    \field{title}{Nonlinear signal transfer from mouse rods to Bipolar cells
+  and implications for visual sensitivity}
+    \field{volume}{34}
+    \field{journaltitle}{Neuron}
+    \field{month}{05}
+    \field{year}{2002}
+  \endentry
+
+  \entry{jonas1992}{article}{}
+    \name{author}{3}{}{%
+      {{hash=JJB}{%
+         family={Jonas},
+         family_i={J\bibinitperiod},
+         given={Jost\bibnamedelima B.},
+         given_i={J\bibinitperiod\bibinitdelim B\bibinitperiod},
+      }}%
+      {{hash=SU}{%
+         family={Schneider},
+         family_i={S\bibinitperiod},
+         given={Ulrike},
+         given_i={U\bibinitperiod},
+      }}%
+      {{hash=NGOH}{%
+         family={Naumann},
+         family_i={N\bibinitperiod},
+         given={Gottfried O.\bibnamedelima H.},
+         given_i={G\bibinitperiod\bibinitdelim O\bibinitperiod\bibinitdelim
+  H\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer Nature}%
+    }
+    \strng{namehash}{JJBSUNGOH1}
+    \strng{fullhash}{JJBSUNGOH1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{J}
+    \field{sortinithash}{J}
+    \verb{doi}
+    \verb 10.1007/bf00181769
+    \endverb
+    \field{issn}{0721-832X}
+    \field{number}{6}
+    \field{pages}{505\bibrangedash 510}
+    \field{title}{Count and density of human retinal photoreceptors}
+    \field{volume}{230}
+    \field{journaltitle}{Graefe's Archive for Clinical and Experimental
+  Ophthalmology}
+    \field{month}{10}
+    \field{year}{1992}
+  \endentry
+
+  \entry{knill2004}{article}{}
+    \name{author}{2}{}{%
+      {{hash=KDC}{%
+         family={Knill},
+         family_i={K\bibinitperiod},
+         given={David\bibnamedelima C.},
+         given_i={D\bibinitperiod\bibinitdelim C\bibinitperiod},
+      }}%
+      {{hash=PA}{%
+         family={Pouget},
+         family_i={P\bibinitperiod},
+         given={Alexandre},
+         given_i={A\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Elsevier BV}%
+    }
+    \strng{namehash}{KDCPA1}
+    \strng{fullhash}{KDCPA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{K}
+    \field{sortinithash}{K}
+    \verb{doi}
+    \verb 10.1016/j.tins.2004.10.007
+    \endverb
+    \field{issn}{0166-2236}
+    \field{number}{12}
+    \field{pages}{712\bibrangedash 719}
+    \field{title}{The Bayesian brain: The role of uncertainty in neural coding
+  and computation}
+    \field{volume}{27}
+    \field{journaltitle}{Trends in Neurosciences}
+    \field{month}{12}
+    \field{year}{2004}
+  \endentry
+
+  \entry{najemnik2005}{article}{}
+    \name{author}{2}{}{%
+      {{hash=NJ}{%
+         family={Najemnik},
+         family_i={N\bibinitperiod},
+         given={J.},
+         given_i={J\bibinitperiod},
+      }}%
+      {{hash=GW}{%
+         family={Geisler},
+         family_i={G\bibinitperiod},
+         given={W.S.},
+         given_i={W\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Elsevier BV}%
+    }
+    \strng{namehash}{NJGW1}
+    \strng{fullhash}{NJGW1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{N}
+    \field{sortinithash}{N}
+    \verb{doi}
+    \verb 10.1016/j.ajo.2005.04.009
+    \endverb
+    \field{issn}{0002-9394}
+    \field{number}{6}
+    \field{pages}{1152\bibrangedash 1153}
+    \field{title}{Optimal eye movement strategies in visual search}
+    \field{volume}{139}
+    \field{journaltitle}{American Journal of Ophthalmology}
+    \field{month}{06}
+    \field{year}{2005}
+  \endentry
+
+  \entry{nunezvarela2013}{article}{}
+    \name{author}{2}{}{%
+      {{hash=NVJ}{%
+         family={Nunez-Varela},
+         family_i={N\bibinitperiod-V\bibinitperiod},
+         given={Jose},
+         given_i={J\bibinitperiod},
+      }}%
+      {{hash=WJL}{%
+         family={Wyatt},
+         family_i={W\bibinitperiod},
+         given={Jeremy\bibnamedelima L.},
+         given_i={J\bibinitperiod\bibinitdelim L\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Association for Computing Machinery (ACM)}%
+    }
+    \strng{namehash}{NVJWJL1}
+    \strng{fullhash}{NVJWJL1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{N}
+    \field{sortinithash}{N}
+    \verb{doi}
+    \verb 10.1145/2536764.2536767
+    \endverb
+    \field{issn}{1544-3558}
+    \field{number}{4}
+    \field{pages}{1\bibrangedash 22}
+    \field{title}{Models of gaze control for manipulation tasks}
+    \field{volume}{10}
+    \field{journaltitle}{ACM Transactions on Applied Perception}
+    \field{month}{10}
+    \field{year}{2013}
+  \endentry
+
+  \entry{purves2001}{book}{}
+    \name{author}{4}{}{%
+      {{hash=PD}{%
+         family={Purves},
+         family_i={P\bibinitperiod},
+         given={D},
+         given_i={D},
+      }}%
+      {{hash=AG}{%
+         family={Augustine},
+         family_i={A\bibinitperiod},
+         given={GJ},
+         given_i={G\bibinitperiod},
+      }}%
+      {{hash=FD}{%
+         family={Fitzpatrick},
+         family_i={F\bibinitperiod},
+         given={D},
+         given_i={D},
+      }}%
+      {{hash=ea}{%
+         prefix={et},
+         prefix_i={e\bibinitperiod},
+         family={al.},
+         family_i={a\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Sunderland (MA): Sinauer Associates}%
+    }
+    \strng{namehash}{PD+1}
+    \strng{fullhash}{PDAGFDae1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{P}
+    \field{sortinithash}{P}
+    \field{edition}{2nd}
+    \field{title}{Neuroscience}
+    \field{year}{2001}
+  \endentry
+
+  \entry{rao2010}{article}{}
+    \name{author}{1}{}{%
+      {{hash=RRPN}{%
+         family={Rao},
+         family_i={R\bibinitperiod},
+         given={Rajesh P.\bibnamedelima N.},
+         given_i={R\bibinitperiod\bibinitdelim P\bibinitperiod\bibinitdelim
+  N\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Frontiers Media SA}%
+    }
+    \strng{namehash}{RRPN1}
+    \strng{fullhash}{RRPN1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{R}
+    \field{sortinithash}{R}
+    \verb{doi}
+    \verb 10.3389/fncom.2010.00146
+    \endverb
+    \field{issn}{1662-5188}
+    \field{title}{Decision making under uncertainty: A neural model based on
+  partially observable Markov decision processes}
+    \field{volume}{4}
+    \field{journaltitle}{Frontiers in Computational Neuroscience}
+    \field{year}{2010}
+  \endentry
+
+  \entry{vanrossum1998}{article}{}
+    \name{author}{2}{}{%
+      {{hash=vRM}{%
+         prefix={van},
+         prefix_i={v\bibinitperiod},
+         family={ROSSUM},
+         family_i={R\bibinitperiod},
+         given={M.C.W.},
+         given_i={M\bibinitperiod},
+      }}%
+      {{hash=SR}{%
+         family={SMITH},
+         family_i={S\bibinitperiod},
+         given={R.G.},
+         given_i={R\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Cambridge University Press (CUP)}%
+    }
+    \strng{namehash}{RMvSR1}
+    \strng{fullhash}{RMvSR1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{R}
+    \field{sortinithash}{R}
+    \verb{doi}
+    \verb 10.1017/s0952523898155037
+    \endverb
+    \field{issn}{0952-5238}
+    \field{number}{05}
+    \field{title}{Noise removal at the rod synapse of mammalian retina}
+    \field{volume}{15}
+    \field{journaltitle}{Visual Neuroscience}
+    \field{month}{05}
+    \field{year}{1998}
+  \endentry
+
+  \entry{thrun2005}{book}{}
+    \name{author}{3}{}{%
+      {{hash=TS}{%
+         family={Thrun},
+         family_i={T\bibinitperiod},
+         given={Sebastian},
+         given_i={S\bibinitperiod},
+      }}%
+      {{hash=BW}{%
+         family={Burgard},
+         family_i={B\bibinitperiod},
+         given={Wolfram},
+         given_i={W\bibinitperiod},
+      }}%
+      {{hash=FD}{%
+         family={Fox},
+         family_i={F\bibinitperiod},
+         given={Dieter},
+         given_i={D\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {MIT Press}%
+    }
+    \strng{namehash}{TSBWFD1}
+    \strng{fullhash}{TSBWFD1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{T}
+    \field{sortinithash}{T}
+    \field{edition}{2}
+    \field{isbn}{9780262201629}
+    \field{title}{Probabilistic robotics}
+    \list{location}{1}{%
+      {Cambridge, MA}%
+    }
+    \field{month}{09}
+    \field{year}{2005}
+  \endentry
+\endsortlist
+\endinput

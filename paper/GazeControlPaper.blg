@@ -1,0 +1,64 @@
+This is BibTeX, Version 0.99d (TeX Live 2016)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: GazeControlPaper.aux
+The style file: biblatex.bst
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=20001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: GazeControlPaper-blx.bib
+Database file #2: export.bib
+Biblatex version: 3.3
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+You've used 11 entries,
+            6256 wiz_defined-function locations,
+            1264 strings with 10457 characters,
+and the built_in function-call counts, 65204 in all, are:
+= -- 4451
+> -- 1503
+< -- 522
++ -- 1594
+- -- 524
+* -- 4726
+:= -- 6122
+add.period$ -- 0
+call.type$ -- 11
+change.case$ -- 312
+chr.to.int$ -- 78
+cite$ -- 20
+duplicate$ -- 6789
+empty$ -- 5853
+format.name$ -- 735
+if$ -- 13744
+int.to.chr$ -- 0
+int.to.str$ -- 31
+missing$ -- 0
+newline$ -- 401
+num.names$ -- 646
+pop$ -- 3390
+preamble$ -- 1
+purify$ -- 371
+quote$ -- 0
+skip$ -- 2412
+stack$ -- 0
+substring$ -- 7174
+swap$ -- 1930
+text.length$ -- 332
+text.prefix$ -- 12
+top$ -- 1
+type$ -- 362
+warning$ -- 0
+while$ -- 766
+width$ -- 0
+write$ -- 391
