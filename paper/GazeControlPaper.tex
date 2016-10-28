@@ -29,7 +29,7 @@
 \section{Introduction}
 Humans achieve near optimal performance in visual perception tasks\cite{najemnik2005,knill2004} despite employing a mostly noisy sensory information.
 For example, photon sensitive cells fire seemingly randomly at incoming stimuli as activity in low light is accompanied by continuous noise\cite{baylor1984,vanrossum1998,field2002}.  
-More so, the mammal ocular globe has a non-uniform distribution of sensory cells.
+More so, the ocular globe has a non-uniform distribution of sensory cells.
 Whilst the majority of cells are located in a central area called the fovea, the peripheral regions are coarse\cite{jonas1992,purves2001}. 
 The difference in cell density and size leads to a clear perception at the center of vision and imprecise perception for peripheral view.  
 In spite of such noisy and imprecise apparatus, humans are able to act near optimally to the surrounding environment. 
@@ -41,7 +41,7 @@ That is, optimal behaviour would elucidate the state of the world selectively, i
 
 We posit that gaze behaviour requires a combination of reward and level of uncertainty to determine the optimal place of focus.
 The process has importance to the field of robotics, where systems must behave timely and robustly in spite of noisy sensory hardware.
-We seek to replicate such behaviour in a task akin of visual perception, where motor activities compete over sensory control. 
+We seek to replicate human behaviour in a task akin of visual perception, where motor activities compete over sensory control. 
 More precisely, we demonstrate how optimal gaze behaviour can be learned from positive and negative feedback notwithstanding noisy input.
 
 \subsection{Experimental Setup}
@@ -50,7 +50,7 @@ Two items of different reward values are randomly placed on a screen (fig. \ref{
 The items are shown for a brief moment after which a subject is required to click on the locations where he perceived the objects to be. 
 If the location is selected correctly the subject is rewarded corresponding to the selected item's value otherwise he receives a punishment.
 
-For our model, the subject is a set of neural networks representing an artificial learning agent. 
+For our model, the subject is replaced by a set of neural networks representing an artificial learning agent. 
 As with a real subject, visual information of an item's location is perturbed. 
 We simulate human ocular fixation, in that, the further the center of view is from an item, the more the item's position is displaced. 
 Both the real and artificial subject can attempt to collect rewards from all displayed items. 
@@ -126,7 +126,7 @@ We denote the spread of particles for each item to be the agent's belief state.
 Optimising gaze control requires finding appropriate action policies for an agent to follow.  
 For example, at what moment is uncertainty low enough for an item to be safely grasped? 
 The answer is situation specific, as it depends on the level of noise present in a system. 
-An agent can however learn appropriate grasp policies by following methods described in Rashej Rao's decision making under uncertainty \cite{rao2010}.
+An agent can learn appropriate grasp policies by following methods described in Rashej Rao's decision making under uncertainty \cite{rao2010}.
 
 \begin{figure}[!h]
 	\centering
@@ -139,7 +139,7 @@ Our agent is trained over 8000 trials using reinforcement learning and an actor 
 The model's value function returns the expected reward for the agent's current belief state.
 For example, in high uncertainty, the expected reward is low regardless of what actions can be taken.
 When uncertainty is low however, the chances of receiving reward are high even if non-optimal decisions are made.  
-The mean location of particles in a filter is taken as the estimated item location.
+The mean position of particles in a filter is taken as the estimated item location.
 If the particle spread is large, in uncertainty, the item's location is unlikely to be estimated correctly. 
 
 The difference over time steps in a value function is used to train a corresponding action policy.
@@ -171,8 +171,8 @@ The components of the RBF networks are:
  \item $\pmb{V(b_t)}= \Sigma[v_i * g_i(b_t)]$ - value function
 
  \item $\pmb{A_j(b_t)}= \Sigma[w_{ji} * g_i(b_t)]$ - action value.
-   Although network output is a probability calculated as $P_{action} = softmax(A_1(b_t),A_2(b_t))$; 
-   Where \textbf{softmax} is a normalised exponential function.
+   Although network output is the probability $P_{action} = softmax(A_1(b_t),A_2(b_t))$; 
+   (where \textbf{softmax} is a normalised exponential function).
 \end{list}
 
 Grasp learning requires only a single item's uncertainty and value, whilst gazing requires both. 
@@ -188,10 +188,11 @@ Gazing therefore requires knowledge of both items for a decision to be made (fig
 \end{figure}
 
 Grasp learning is trained in an online fashion using reinforcement learning.
-However, the Gaussian layer of the network is determined prior to training through k-means clustering across a set of randomly generated belief state values.
+The Gaussian layer of the network is determined prior to training through k-means clustering across a set of randomly generated belief state values.
 Our architecture consists of 60 units for the Gaussian layer. 
-Reinforcement learning is then used in training the output layer weights.
-The grasp decision is learned from reward values generated by the environment, and follows the update equations : 
+Reinforcement learning is used to training the output layer weights.
+We use the reward values generated by the environment to train these weights. 
+At each training step, the weights are updated as follows:
 
 \begin{list}{}{}
   \item \textbf{reward = received from environment}; see table \ref{table:rewards}
@@ -200,16 +201,16 @@ The grasp decision is learned from reward values generated by the environment, a
   \item $\pmb{w_{ji} = w_{ji}+ 0.0005 * TD * g_i(b_t)}$; action policy weights
 \end{list}  
 
-The gaze policy is trained in a similar manner. 
+Gazeing is trained in a similar manner. 
 The Gaussian layer consists of 180 kernel centres that are distributed through k-means clustering. 
 However, in training the output layer, the reward is taken as the overall improvement over expected grasping rewards. 
 Environment rewards do not directly feed into optimal gaze learning, meaning the model does not exclusively focus on the item rendering highest reward.
 Instead, gaze actions depend on an estimated reward value generated by the grasp policy.
-More exactly, gaze learning depends on a prediction of the joint improvement of reward for grasping both items.
-The improvement stems from a decrease in uncertainty of the items, as new visual information is collected. 
+More exactly, gaze learning depends on a prediction of the joint improvement of reward over both items.
+The improvement stems from a decrease in uncertainty of each item, as new visual information is collected. 
 
-Since the grasping reward increases concomitantly with the probability of executing a grasp action, gaze reward values can be taken as grasp probabilities instead of actual policy values. 
-Changes to environment reward values or to grasp learning rates would not cause further changes in gaze learning as input values are naturally normalised by being probabilities.
+Since the grasping reward increases concomitantly with the probability of executing a grasp action, gaze reward values can be taken as the grasp probabilities instead of actual policy values. 
+Changes to environment reward values or to grasp learning rates would not cause further changes in gaze learning as input values are naturally normalised as probabilities.
 The update equations for gaze learning are therefore as follows: 
 \begin{list}{}{}
   \item $\pmb{reward = \sum_{item}[P_{grasp}(b_{t+1}) -  P_{grasp}(b_t)] }$; 
@@ -232,9 +233,9 @@ Noticeably, optimised gaze performs much better.
 	\label{fig:results}
 \end{figure}
 
-We also explore the scenario where an agent is allowed to make as many visual fixations as needed before having to make grasp decisions. 
+Additionally, we explore the scenario where an agent is allowed to make as many visual fixations as needed before having to make grasp decisions. 
 The agent is allowed to grasp either object or both, although he may do so when having gained enough certainty about each item's position. 
-We incentivise grasping by penalising the agent for each time step where it chooses to not grasp.
+We incentivise eager grasping by penalising the agent for each time step where it chooses to not grasp.
 Figure \ref{fig:resultsTimless} shows optimal gaze to have a marginal impact on overall task performance.
 However, when looking at the number of fixations, optimal gaze tends to fixate noticeably fewer times than random gaze (fig. \ref{fig:gazeCount}). 
 
